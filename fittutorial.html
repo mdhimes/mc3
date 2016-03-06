@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Optimization Tutorial &mdash; MC3 1.2.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="MC3 1.2.2 documentation" href="index.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="MCMC Tutorial" href="mctutorial.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="mctutorial.html" title="MCMC Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="optimization-tutorial">
+<span id="fittutorial"></span><h1>Optimization Tutorial<a class="headerlink" href="#optimization-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal"><span class="pre">MCcubed.fit</span></code> package provides the <code class="docutils literal"><span class="pre">modelfit</span></code> routine for
+model-fitting optimization through the least-squares
+Levenberg-Marquardt algorith.</p>
+<p><code class="docutils literal"><span class="pre">modelfit</span></code> is a wrapper of <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code> with additional
+features, including Gaussian-parameter priors, parameter boundaries,
+and sharing and fixing parameters.
+All <code class="docutils literal"><span class="pre">modelfit</span></code> arguments are identical to those of the MCMC.</p>
+<div class="section" id="fitting-parameters">
+<h2>Fitting Parameters<a class="headerlink" href="#fitting-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">params</span></code> argument (required) contains the initial-guess values
+for the model fitting parameters.  The <code class="docutils literal"><span class="pre">params</span></code> argument must be
+a 1D float ndarray.</p>
+</div>
+<div class="section" id="modeling-function">
+<h2>Modeling Function<a class="headerlink" href="#modeling-function" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">func</span></code> argument (required) defines the parameterized modeling function.
+The only requirement for the modeling function is that its arguments follow
+the same structure of the callable in <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code>, i.e.,
+the first argument contains the list of fitting parameters.</p>
+<p>If func requires additional arguments, they can be provided through
+the <code class="docutils literal"><span class="pre">indparams</span></code> argument (see <a class="reference internal" href="#indp"><span>Independent Parameters</span></a>).
+Eventually, the modeling function could be called with the following command:</p>
+<p><code class="docutils literal"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">func(params,</span> <span class="pre">*indparams)</span></code></p>
+</div>
+<div class="section" id="data-and-data-uncertainties">
+<h2>Data and Data Uncertainties<a class="headerlink" href="#data-and-data-uncertainties" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">data</span></code> argument (required) defines the dataset to be fitted.
+This argument can be either a 1D float ndarray or the filename (a string)
+where the data array is located.</p>
+<p>The <code class="docutils literal"><span class="pre">uncert</span></code> argument (required) defines the <span class="math">\(1\sigma\)</span> uncertainties
+of the <code class="docutils literal"><span class="pre">data</span></code> array.
+This argument can be either a 1D float ndarray (same length of <code class="docutils literal"><span class="pre">data</span></code>) or the filename where the data uncertainties are located.</p>
+</div>
+<div class="section" id="independent-parameters">
+<span id="indp"></span><h2>Independent Parameters<a class="headerlink" href="#independent-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">indparams</span></code> argument (optional) is a tuple (or list) that packs
+any additional arguments required by <code class="docutils literal"><span class="pre">func</span></code>.
+Even if <code class="docutils literal"><span class="pre">indparams</span></code> consists of a single variable, it must be defined
+as a list or tuple.</p>
+</div>
+<div class="section" id="stepsize-fixed-and-shared-paramerers">
+<h2>Stepsize: Fixed, and Shared Paramerers<a class="headerlink" href="#stepsize-fixed-and-shared-paramerers" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">stepsize</span></code> argument (optional) is a 1D float ndarray,
+where each element correspond to one of the fitting parameters.
+For optimization, <code class="docutils literal"><span class="pre">stepsize</span></code> determines the free, fixed, and shared
+parameters.
+If the stepsize is positive (irrelevant of the value), the parameter is
+a free fitting parameter.</p>
+<p>To fix a parameter at the given initial-guess value,
+set the stepsize of the given parameter to <span class="math">\(0\)</span>.</p>
+<p>To copy the value from another parameter (free or fixed),
+set the stepsize equal to the negative index of the sharing
+parameter.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Consider that in this case, contrary to Python standards,
+the indexing starts counting from one instead of zero.  Thus,
+for example, to share a value with that of the first parameter,
+set the parameter&#8217;s stepsize to <span class="math">\(-1\)</span>.</p>
+</div>
+</div>
+<div class="section" id="parameter-boundaries">
+<h2>Parameter Boundaries<a class="headerlink" href="#parameter-boundaries" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">pmin</span></code> and <code class="docutils literal"><span class="pre">pmax</span></code> arguments (optional) are 1D float ndarrays that
+set the lower and upper boundaries explored by the minimizer for each
+fitting parameter (same size of <code class="docutils literal"><span class="pre">params</span></code>).
+The default values for each element of <code class="docutils literal"><span class="pre">pmin</span></code> and <code class="docutils literal"><span class="pre">pmax</span></code> are
+<code class="docutils literal"><span class="pre">-np.inf</span></code> and <code class="docutils literal"><span class="pre">+np.inf</span></code>, respectively.</p>
+</div>
+<div class="section" id="parameter-priors">
+<h2>Parameter Priors<a class="headerlink" href="#parameter-priors" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">prior</span></code>, <code class="docutils literal"><span class="pre">priorlow</span></code>, and <code class="docutils literal"><span class="pre">priorup</span></code> arguments (optional) set the
+prior probability distributions of the fitting parameters.
+Each of these arguments is a 1D float ndarray.</p>
+<p>If a value of <code class="docutils literal"><span class="pre">priorlow</span></code> is <span class="math">\(0.0\)</span> (default) for a given parameter,
+the MCMC will apply a uniform non-informative prior:</p>
+<div class="math" id="equation-noninfprior">
+<span class="eqno">(1)</span>\[p(\theta) = \frac{1}{\theta_{\rm max} - \theta_{\rm min}},\]</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is appropriate when there is no prior knowledge of the
+value of <span class="math">\(\theta\)</span>.</p>
+</div>
+<p>If <code class="docutils literal"><span class="pre">priorlow</span></code> is greater than  <span class="math">\(0.0\)</span> for a given parameter,
+the MCMC will apply a Gaussian informative prior:</p>
+<div class="math" id="equation-gaussianprior">
+<span class="eqno">(2)</span>\[p(\theta) = \frac{1}{\sqrt{2\pi\sigma_{p}^{2}}}
+       \exp\left(\frac{-(\theta-\theta_{p})^{2}}{2\sigma_{p}^{2}}\right),\]</div>
+<p>where <code class="docutils literal"><span class="pre">prior</span></code> sets the prior value <span class="math">\(\theta_{p}\)</span>, and
+<code class="docutils literal"><span class="pre">priorlow</span></code> and <code class="docutils literal"><span class="pre">priorup</span></code>
+set the lower and upper <span class="math">\(1\sigma\)</span> prior uncertainties,
+<span class="math">\(\sigma_{p}\)</span>, of the prior (depending if the proposed value
+<span class="math">\(\theta\)</span> is lower or higher than <span class="math">\(\theta_{p}\)</span>).</p>
+</div>
+<div class="section" id="outputs">
+<h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">modelfit</span></code> returns four variables:</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">chisq</span></code> (float) is the best-fitting chi-square value.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">bestparams</span></code> (1D float ndarray) is the array of best-fitting parameters,
+including fixed and shared parameters.</p>
+</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">bestmodel</span></code> (1D float ndarray) is the best-fitting model found, i.e.,</dt>
+<dd><p class="first last"><code class="docutils literal"><span class="pre">func(bestparams,</span> <span class="pre">*indparams)</span></code>.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">lsfit</span></code> (list) is <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code>&#8216;s full_output return.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">MCcubed</span> <span class="kn">as</span> <span class="nn">mc3</span>  <span class="c"># Add path to mc3 if necessary</span>
+
+<span class="c"># Create a synthetic dataset using a quadratic polynomial curve:</span>
+<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>          <span class="c"># Independent model variable</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span>                     <span class="c"># True-underlying model parameters</span>
+<span class="n">y</span>  <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c"># Noiseless model</span>
+<span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>           <span class="c"># Data points uncertainty</span>
+<span class="n">error</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c"># Noise for the data</span>
+<span class="n">data</span>   <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">error</span>                    <span class="c"># Noisy data set</span>
+
+<span class="c"># Array of initial-guess values of fitting parameters:</span>
+<span class="n">params</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">20.0</span><span class="p">,</span>  <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span>   <span class="mf">0.1</span><span class="p">])</span>
+
+<span class="c"># Get a modeling function (quadractic polynomial):</span>
+<span class="c">#sys.path.append(&quot;./MCcubed/models/&quot;)  # Set the appropriate path</span>
+<span class="kn">import</span> <span class="nn">quadratic</span> <span class="kn">as</span> <span class="nn">q</span>
+<span class="n">func</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">quad</span>
+
+<span class="c"># indparams contains additional arguments of func (besides params):</span>
+<span class="n">indparams</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
+
+<span class="n">params</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">1.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.3</span><span class="p">])</span>
+<span class="n">stepsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">1.0</span><span class="p">,</span>   <span class="mf">1.0</span><span class="p">,</span>   <span class="mf">1.0</span><span class="p">])</span>  <span class="c"># All model parameters free</span>
+<span class="n">pmin</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">10.0</span><span class="p">])</span>  <span class="c"># Lower param boundaries</span>
+<span class="n">pmax</span>     <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">40.0</span><span class="p">,</span>  <span class="mf">20.0</span><span class="p">,</span>  <span class="mf">10.0</span><span class="p">])</span>  <span class="c"># Upper param boundaries</span>
+<span class="n">prior</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">priorlow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">])</span>  <span class="c"># Flat priors</span>
+<span class="n">priorup</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">])</span>
+<span class="c"># prior and priorup are irrelevant if priorlow == 0 (for a given parameter)</span>
+
+<span class="n">chisq</span><span class="p">,</span> <span class="n">bestp</span><span class="p">,</span> <span class="n">bestmodel</span><span class="p">,</span> <span class="n">lsfit</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">quad</span><span class="p">,</span>
+                             <span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span>
+                             <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
+                             <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Optimization Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#fitting-parameters">Fitting Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modeling-function">Modeling Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-and-data-uncertainties">Data and Data Uncertainties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#independent-parameters">Independent Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stepsize-fixed-and-shared-paramerers">Stepsize: Fixed, and Shared Paramerers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-boundaries">Parameter Boundaries</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#parameter-priors">Parameter Priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outputs">Outputs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="mctutorial.html"
+                        title="previous chapter">MCMC Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="license.html"
+                        title="next chapter">License</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="mctutorial.html" title="MCMC Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015-2016, Patricio Cubillos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>

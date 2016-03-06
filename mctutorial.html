@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Tutorial &mdash; MC3 1.2.1 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 1.2.2 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.2.1',
+        VERSION:     '1.2.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 1.2.1 documentation" href="index.html" />
-    <link rel="next" title="License" href="license.html" />
+    <link rel="top" title="MC3 1.2.2 documentation" href="index.html" />
+    <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
   <body role="document">
@@ -36,12 +36,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="license.html" title="License"
+          <a href="fittutorial.html" title="Optimization Tutorial"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -50,8 +50,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="tutorial">
-<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="mcmc-tutorial">
+<span id="mctutorial"></span><h1>MCMC Tutorial<a class="headerlink" href="#mcmc-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>This tutorial describes the available options when running an MCMC with <code class="docutils literal"><span class="pre">MC3</span></code>.
 As said before, the MCMC can be run from the shell prompt or through a function call in the Python interpreter.</p>
 <div class="section" id="argument-inputs">
@@ -67,7 +67,7 @@ arguments.  To see all the available options, run:</p>
 </pre></div>
 </div>
 <p>Additionally (and strongly recommended),
-wether you are running the MCMC from the shell or from
+whether you are running the MCMC from the shell or from
 the interpreter, the arguments can be input through a configuration file.</p>
 </div>
 <div class="section" id="configuration-files">
@@ -246,7 +246,7 @@ the MCMC will apply a Jeffreys non-informative prior
 <p class="last">This is valid only when the parameter takes positive values.
 This is a more appropriate prior than a uniform prior when <span class="math">\(\theta\)</span>
 can take values over several orders of magnitude.
-For more information, see <a class="reference internal" href="#gregory2005" id="id2">[Gregory2005]</a>, Sec. 3.7.1.</p>
+For more information, see <a class="reference internal" href="#gregory2005" id="id1">[Gregory2005]</a>, Sec. 3.7.1.</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -291,7 +291,7 @@ argument:</p>
 <span class="eqno">(4)</span>\[q(\theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}
             \exp \left( -\frac{(\theta-\theta_0)^2}{2 \sigma^2}\right)\]</div>
 <p>If <code class="docutils literal"><span class="pre">walk</span> <span class="pre">=</span> <span class="pre">demc</span></code> (default value), MC3 will use Differential-Evolution
-MCMC algorithm (for further reading, see <a class="reference internal" href="#terbraak2006" id="id3">[terBraak2006]</a>).</p>
+MCMC algorithm (for further reading, see <a class="reference internal" href="#terbraak2006" id="id2">[terBraak2006]</a>).</p>
 </div>
 <div class="section" id="mcmc-chains-configuration">
 <h3>MCMC Chains Configuration<a class="headerlink" href="#mcmc-chains-configuration" title="Permalink to this headline">¶</a></h3>
@@ -359,7 +359,7 @@ uncertainties by a common scale factor.</p>
 indicates MC3 to run the Gelman-Rubin convergence test for the MCMC sample of
 fitting parameters.
 Values substantially larger than 1 indicate non-convergence.
-See <a class="reference internal" href="#gelmanrubin1992" id="id4">[GelmanRubin1992]</a> for further information.</p>
+See <a class="reference internal" href="#gelmanrubin1992" id="id3">[GelmanRubin1992]</a> for further information.</p>
 <p>The <code class="docutils literal"><span class="pre">grexit</span></code> argument (optional, boolean, default=False)
 is a flag that allows the MCMC to stop if the Gelman-Rubin test returns
 values below 1.01 for all parameter, two consecutive times.</p>
@@ -381,7 +381,7 @@ parameters (<span class="math">\(\gamma, \sigma_{r}, \sigma_{w}\)</span>) from C
 to the end of the <code class="docutils literal"><span class="pre">params</span></code> array.  Likewise, add the correspoding values
 to the <code class="docutils literal"><span class="pre">pmin</span></code>, <code class="docutils literal"><span class="pre">pmax</span></code>, <code class="docutils literal"><span class="pre">stepsize</span></code>, <code class="docutils literal"><span class="pre">prior</span></code>, <code class="docutils literal"><span class="pre">priorlow</span></code>,
 and <code class="docutils literal"><span class="pre">priorup</span></code> arrays.
-For further information see <a class="reference internal" href="#carterwinn2009" id="id5">[CarterWinn2009]</a>.</p>
+For further information see <a class="reference internal" href="#carterwinn2009" id="id4">[CarterWinn2009]</a>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">wlike</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c"># Use Carter &amp; Winn&#39;s Wavelet-likelihood method.</span>
 </pre></div>
 </div>
@@ -414,7 +414,7 @@ the MCMC-chain trace plot for each parameter,
 and the marginalized and pair-wise posterior plots.</p>
 <p>The <code class="docutils literal"><span class="pre">rms</span></code> argument (optional, boolean, default=False) is a flag that
 indicates MC3 to compute the time-averaging test for time-correlated noise
-and generate a rms-vs-binsize plot.  For further information see <a class="reference internal" href="#winn2008" id="id6">[Winn2008]</a>.</p>
+and generate a rms-vs-binsize plot.  For further information see <a class="reference internal" href="#winn2008" id="id5">[Winn2008]</a>.</p>
 </div>
 <div class="section" id="returned-values">
 <h3>Returned Values<a class="headerlink" href="#returned-values" title="Permalink to this headline">¶</a></h3>
@@ -483,8 +483,8 @@ gives an example of how to create <code class="docutils literal"><span class="pr
 </pre></div>
 </div>
 </div>
-<div class="section" id="id7">
-<h3>Fitting Parameters<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id6">
+<h3>Fitting Parameters<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">params</span></code>, <code class="docutils literal"><span class="pre">pmin</span></code>, <code class="docutils literal"><span class="pre">pmax</span></code>, <code class="docutils literal"><span class="pre">stepsize</span></code>,
 <code class="docutils literal"><span class="pre">prior</span></code>, <code class="docutils literal"><span class="pre">priorlow</span></code>, and <code class="docutils literal"><span class="pre">priorup</span></code> inputs
 can be provided as plain ASCII files.
@@ -535,31 +535,31 @@ routine:</p>
 <table class="docutils citation" frame="void" id="carterwinn2009" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id5">[CarterWinn2009]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2009ApJ...704...51C">Carter &amp; Winn (2009): Parameter Estimation from Time-series Data with Correlated Errors: A Wavelet-based Method and its Application to Transit Light Curves</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id4">[CarterWinn2009]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2009ApJ...704...51C">Carter &amp; Winn (2009): Parameter Estimation from Time-series Data with Correlated Errors: A Wavelet-based Method and its Application to Transit Light Curves</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="gelmanrubin1992" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id4">[GelmanRubin1992]</a></td><td><a class="reference external" href="http://projecteuclid.org/euclid.ss/1177011136">Gelman &amp; Rubin (1992): Inference from Iterative Simulation Using Multiple Sequences</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id3">[GelmanRubin1992]</a></td><td><a class="reference external" href="http://projecteuclid.org/euclid.ss/1177011136">Gelman &amp; Rubin (1992): Inference from Iterative Simulation Using Multiple Sequences</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="gregory2005" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[Gregory2005]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2005blda.book.....G">Gregory (2005): Bayesian Logical Data Analysis for the Physical Sciences</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[Gregory2005]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2005blda.book.....G">Gregory (2005): Bayesian Logical Data Analysis for the Physical Sciences</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="terbraak2006" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[terBraak2006]</a></td><td><a class="reference external" href="http://dx.doi.org/10.1007/s11222-006-8769-1">ter Braak (2006): A Markov Chain Monte Carlo version of the genetic algorithm Differential Evolution</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id2">[terBraak2006]</a></td><td><a class="reference external" href="http://dx.doi.org/10.1007/s11222-006-8769-1">ter Braak (2006): A Markov Chain Monte Carlo version of the genetic algorithm Differential Evolution</a></td></tr>
 </tbody>
 </table>
 <table class="docutils citation" frame="void" id="winn2008" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id6">[Winn2008]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2008ApJ...683.1076W">Winn et al. (2008): The Transit Light Curve Project. IX. Evidence for a Smaller Radius of the Exoplanet XO-3b</a></td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id5">[Winn2008]</a></td><td><a class="reference external" href="http://adsabs.harvard.edu/abs/2008ApJ...683.1076W">Winn et al. (2008): The Transit Light Curve Project. IX. Evidence for a Smaller Radius of the Exoplanet XO-3b</a></td></tr>
 </tbody>
 </table>
 </div>
@@ -574,7 +574,7 @@ routine:</p>
 <h3><a href="index.html">Table Of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Tutorial</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="">MCMC Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#argument-inputs">Argument Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-files">Configuration Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mcmc-run-configuration">MCMC-run Configuration</a><ul>
@@ -595,12 +595,13 @@ routine:</p>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#inputs-from-files">Inputs from Files</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#data">Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Fitting Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6">Fitting Parameters</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="fittutorial.html">Optimization Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -608,8 +609,8 @@ routine:</p>
   <p class="topless"><a href="getstarted.html"
                         title="previous chapter">Getting Started</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="license.html"
-                        title="next chapter">License</a></p>
+  <p class="topless"><a href="fittutorial.html"
+                        title="next chapter">Optimization Tutorial</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -634,12 +635,12 @@ routine:</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="license.html" title="License"
+          <a href="fittutorial.html" title="Optimization Tutorial"
              >next</a> |</li>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.1 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
