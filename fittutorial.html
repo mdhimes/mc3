@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Optimization Tutorial &mdash; MC3 1.2.2 documentation</title>
+    <title>Optimization Tutorial &mdash; MC3 2.2.0 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '1.2.2',
+        VERSION:     '2.2.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 1.2.2 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.0 documentation" href="index.html" />
     <link rel="next" title="License" href="license.html" />
     <link rel="prev" title="MCMC Tutorial" href="mctutorial.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -52,7 +52,7 @@
             
   <div class="section" id="optimization-tutorial">
 <span id="fittutorial"></span><h1>Optimization Tutorial<a class="headerlink" href="#optimization-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal"><span class="pre">MCcubed.fit</span></code> package provides the <code class="docutils literal"><span class="pre">modelfit</span></code> routine for
+<p>The <code class="docutils literal"><span class="pre">MCcubed.fit</span></code> module provides the <code class="docutils literal"><span class="pre">modelfit</span></code> routine for
 model-fitting optimization through the least-squares
 Levenberg-Marquardt algorith.</p>
 <p><code class="docutils literal"><span class="pre">modelfit</span></code> is a wrapper of <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code> with additional
@@ -170,9 +170,13 @@ including fixed and shared parameters.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">MCcubed</span> <span class="kn">as</span> <span class="nn">mc3</span>  <span class="c"># Add path to mc3 if necessary</span>
 
+<span class="c"># Get a modeling function (quadractic polynomial):</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;./examples/models/&quot;</span><span class="p">)</span>  <span class="c"># Set the appropriate path</span>
+<span class="kn">from</span> <span class="nn">quadratic</span> <span class="kn">import</span> <span class="n">quad</span>
+
 <span class="c"># Create a synthetic dataset using a quadratic polynomial curve:</span>
-<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>          <span class="c"># Independent model variable</span>
-<span class="n">p0</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span>                     <span class="c"># True-underlying model parameters</span>
+<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>         <span class="c"># Independent model variable</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>                   <span class="c"># True-underlying model parameters</span>
 <span class="n">y</span>  <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c"># Noiseless model</span>
 <span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>           <span class="c"># Data points uncertainty</span>
 <span class="n">error</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c"># Noise for the data</span>
@@ -181,10 +185,7 @@ including fixed and shared parameters.</p>
 <span class="c"># Array of initial-guess values of fitting parameters:</span>
 <span class="n">params</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">20.0</span><span class="p">,</span>  <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span>   <span class="mf">0.1</span><span class="p">])</span>
 
-<span class="c"># Get a modeling function (quadractic polynomial):</span>
-<span class="c">#sys.path.append(&quot;./MCcubed/models/&quot;)  # Set the appropriate path</span>
-<span class="kn">import</span> <span class="nn">quadratic</span> <span class="kn">as</span> <span class="nn">q</span>
-<span class="n">func</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">quad</span>
+<span class="n">func</span> <span class="o">=</span> <span class="n">quad</span>
 
 <span class="c"># indparams contains additional arguments of func (besides params):</span>
 <span class="n">indparams</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">]</span>
@@ -198,7 +199,7 @@ including fixed and shared parameters.</p>
 <span class="n">priorup</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">,</span>   <span class="mf">0.0</span><span class="p">])</span>
 <span class="c"># prior and priorup are irrelevant if priorlow == 0 (for a given parameter)</span>
 
-<span class="n">chisq</span><span class="p">,</span> <span class="n">bestp</span><span class="p">,</span> <span class="n">bestmodel</span><span class="p">,</span> <span class="n">lsfit</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">q</span><span class="o">.</span><span class="n">quad</span><span class="p">,</span>
+<span class="n">chisq</span><span class="p">,</span> <span class="n">bestp</span><span class="p">,</span> <span class="n">bestmodel</span><span class="p">,</span> <span class="n">lsfit</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">quad</span><span class="p">,</span>
                              <span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span>
                              <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
                              <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">)</span>
@@ -267,7 +268,7 @@ including fixed and shared parameters.</p>
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 1.2.2 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
