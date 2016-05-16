@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.2.0 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 2.2.3 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.0',
+        VERSION:     '2.2.3',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.0 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.3 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -61,7 +61,8 @@ arguments.  To see all the available options, run:</p>
 <div class="highlight-shell"><div class="highlight"><pre>./mc3.py --help
 </pre></div>
 </div>
-<p>When running from a Python interactive session, the arguments can be input as function arguments.  To see the available options, run:</p>
+<p>When running from a Python interactive session, the arguments can be input
+as function arguments.  To see the available options, run:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">MCcubed</span> <span class="kn">as</span> <span class="nn">mc3</span>
 <span class="n">help</span><span class="p">(</span><span class="n">mc3</span><span class="o">.</span><span class="n">mcmc</span><span class="p">)</span>
 </pre></div>
@@ -106,8 +107,13 @@ where the data array is located.</p>
 of the <code class="docutils literal"><span class="pre">data</span></code> array.
 This argument can be either a 1D float ndarray (same length of <code class="docutils literal"><span class="pre">data</span></code>) or the filename where the data uncertainties are located.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c"># Create a synthetic dataset using a quadratic polynomial curve:</span>
-<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>          <span class="c"># Independent model variable</span>
-<span class="n">p0</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span>                     <span class="c"># True-underlying model parameters</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;../MCcubed/examples/models/&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">quadratic</span> <span class="kn">import</span> <span class="n">quad</span>
+
+<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>         <span class="c"># Independent model variable</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>                   <span class="c"># True-underlying model parameters</span>
 <span class="n">y</span>  <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c"># Noiseless model</span>
 <span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>           <span class="c"># Data points uncertainty</span>
 <span class="n">error</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c"># Noise for the data</span>
@@ -490,8 +496,8 @@ gives an example of how to create <code class="docutils literal"><span class="pr
 
 
 <span class="c"># Create a synthetic dataset using a quadratic polynomial curve:</span>
-<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>        <span class="c"># Independent model variable</span>
-<span class="n">p0</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span>                     <span class="c"># True-underlying model parameters</span>
+<span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>       <span class="c"># Independent model variable</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>                   <span class="c"># True-underlying model parameters</span>
 <span class="n">y</span>  <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c"># Noiseless model</span>
 <span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>           <span class="c"># Data points uncertainty</span>
 <span class="n">error</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c"># Noise for the data</span>
@@ -669,7 +675,7 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.0 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
