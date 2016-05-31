@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.2.3 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 2.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.3',
+        VERSION:     '2.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.3 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.6 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -351,19 +351,21 @@ posterior distribution.</p>
 <div class="section" id="optimization">
 <h3>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">leastsq</span></code> argument (optional, boolean, default=False) is a flag that
-indicates MC3 to run a least-squares optimization before running the MCMC.
-MC3 implements the Levenberg-Marquardt algorithm via the
-<code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code> function.</p>
+indicates <code class="docutils literal"><span class="pre">MC3</span></code> to run a least-squares optimization before running the MCMC.
+<code class="docutils literal"><span class="pre">MC3</span></code> implements the Levenberg-Marquardt algorithm (<code class="docutils literal"><span class="pre">lm=True</span></code>) via
+<code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code> or Trust Region Reflective (<code class="docutils literal"><span class="pre">lm=False</span></code>) via
+<code class="docutils literal"><span class="pre">scipy.optimize.least_squares</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The parameter boundaries,  fixed and shared-values, and priors
-setup will apply for the minimization.</p>
+<p class="last">The parameter boundaries (for TRF only, see <a class="reference internal" href="fittutorial.html#fittutorial"><span>Optimization Tutorial</span></a>),
+fixed and shared-values, and priors will apply for the minimization.</p>
 </div>
 <p>The <code class="docutils literal"><span class="pre">chisqscale</span></code> argument (optional, boolean, default=False) is a flag that
-indicates MC3 to scale the data uncertainties to force a reduced
+indicates <code class="docutils literal"><span class="pre">MC3</span></code> to scale the data uncertainties to force a reduced
 <span class="math">\(\chi^{2}\)</span> equal to <span class="math">\(1.0\)</span>.  The scaling applies by multiplying all
 uncertainties by a common scale factor.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">leastsq</span>    <span class="o">=</span> <span class="bp">True</span>   <span class="c"># Least-squares minimization prior to the MCMC</span>
+<span class="n">lm</span>         <span class="o">=</span> <span class="bp">True</span>   <span class="c"># Choose Levenberg-Marquardt (True) or TRF algorithm (False)</span>
 <span class="n">chisqscale</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c"># Scale the data uncertainties such that red. chisq = 1</span>
 </pre></div>
 </div>
@@ -448,7 +450,7 @@ of the parameters posterior distribution (with dimensions
     <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">,</span>
     <span class="n">walk</span><span class="o">=</span><span class="n">walk</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">,</span>  <span class="n">nchains</span><span class="o">=</span><span class="n">nchains</span><span class="p">,</span>
     <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
-    <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
+    <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
     <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
     <span class="n">plots</span><span class="o">=</span><span class="n">plots</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="n">savefile</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="n">rms</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">)</span>
@@ -551,7 +553,7 @@ routine:</p>
     <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
     <span class="n">walk</span><span class="o">=</span><span class="n">walk</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">,</span>  <span class="n">nchains</span><span class="o">=</span><span class="n">nchains</span><span class="p">,</span>
     <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
-    <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
+    <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
     <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
     <span class="n">plots</span><span class="o">=</span><span class="n">plots</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="n">savefile</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="n">rms</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">)</span>
@@ -637,6 +639,7 @@ routine:</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="fittutorial.html">Optimization Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -675,7 +678,7 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

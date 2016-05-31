@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Optimization Tutorial &mdash; MC3 2.2.3 documentation</title>
+    <title>Optimization Tutorial &mdash; MC3 2.2.6 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.3',
+        VERSION:     '2.2.6',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,8 +24,8 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.3 documentation" href="index.html" />
-    <link rel="next" title="License" href="license.html" />
+    <link rel="top" title="MC3 2.2.6 documentation" href="index.html" />
+    <link rel="next" title="Contributing" href="contributing.html" />
     <link rel="prev" title="MCMC Tutorial" href="mctutorial.html" /> 
   </head>
   <body role="document">
@@ -36,12 +36,12 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="license.html" title="License"
+          <a href="contributing.html" title="Contributing"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -55,10 +55,23 @@
 <p>The <code class="docutils literal"><span class="pre">MCcubed.fit</span></code> module provides the <code class="docutils literal"><span class="pre">modelfit</span></code> routine for
 model-fitting optimization through the least-squares
 Levenberg-Marquardt algorith.</p>
-<p><code class="docutils literal"><span class="pre">modelfit</span></code> is a wrapper of <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code> with additional
-features, including Gaussian-parameter priors, parameter boundaries,
-and sharing and fixing parameters.
+<p><code class="docutils literal"><span class="pre">modelfit</span></code> is a wrapper of <code class="docutils literal"><span class="pre">scipy.optimize</span></code>&#8216;s <code class="docutils literal"><span class="pre">leastsq</span></code> and
+<code class="docutils literal"><span class="pre">least_squares</span></code> routines, with additional features, including
+Gaussian-parameter priors, and sharing and fixing parameters.
 All <code class="docutils literal"><span class="pre">modelfit</span></code> arguments are identical to those of the MCMC.</p>
+<div class="section" id="optimization-algorithm">
+<h2>Optimization Algorithm<a class="headerlink" href="#optimization-algorithm" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal"><span class="pre">lm</span></code> argument (default: <code class="docutils literal"><span class="pre">False</span></code>) determines the optimization
+algorithm.  If <code class="docutils literal"><span class="pre">lm=True</span></code>, use the Levenberg-Marquardt algorithm (through
+<code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code>).  If <code class="docutils literal"><span class="pre">lm=False</span></code>, use the Trust Region
+Reflective algorithm (through <code class="docutils literal"><span class="pre">scipy.optimize.least_squares</span></code>).</p>
+<p>Note that although LM is more efficient than TRF, LM does not support
+parameter boundaries.  A LM run will find the un-bounded
+best-fitting solution, regardless of <code class="docutils literal"><span class="pre">pmin</span></code> and <code class="docutils literal"><span class="pre">pmax</span></code>.</p>
+<p>For the same reason, if the model parameters are not bounded (i.e.,
+<code class="docutils literal"><span class="pre">np.all(pmin==-np.inf)</span></code> and <code class="docutils literal"><span class="pre">np.all(pmax==np.inf)</span></code>), <code class="docutils literal"><span class="pre">modelfit</span></code>
+will use the LM algorithm.</p>
+</div>
 <div class="section" id="fitting-parameters">
 <h2>Fitting Parameters<a class="headerlink" href="#fitting-parameters" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal"><span class="pre">params</span></code> argument (required) contains the initial-guess values
@@ -161,7 +174,7 @@ including fixed and shared parameters.</p>
 </dd>
 </dl>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">lsfit</span></code> (list) is <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code>&#8216;s full_output return.</p>
+<li><p class="first"><code class="docutils literal"><span class="pre">lsfit</span></code> is the output from the <code class="docutils literal"><span class="pre">scipy</span></code> optimization routine.</p>
 </li>
 </ul>
 </div>
@@ -200,9 +213,9 @@ including fixed and shared parameters.</p>
 <span class="c"># prior and priorup are irrelevant if priorlow == 0 (for a given parameter)</span>
 
 <span class="n">chisq</span><span class="p">,</span> <span class="n">bestp</span><span class="p">,</span> <span class="n">bestmodel</span><span class="p">,</span> <span class="n">lsfit</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">fit</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">quad</span><span class="p">,</span>
-                             <span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span>
-                             <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
-                             <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span>
+    <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span>
+    <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -219,6 +232,7 @@ including fixed and shared parameters.</p>
 <li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Optimization Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#optimization-algorithm">Optimization Algorithm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fitting-parameters">Fitting Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#modeling-function">Modeling Function</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#data-and-data-uncertainties">Data and Data Uncertainties</a></li>
@@ -230,6 +244,7 @@ including fixed and shared parameters.</p>
 <li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
 
@@ -237,8 +252,8 @@ including fixed and shared parameters.</p>
   <p class="topless"><a href="mctutorial.html"
                         title="previous chapter">MCMC Tutorial</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="license.html"
-                        title="next chapter">License</a></p>
+  <p class="topless"><a href="contributing.html"
+                        title="next chapter">Contributing</a></p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
@@ -263,12 +278,12 @@ including fixed and shared parameters.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="license.html" title="License"
+          <a href="contributing.html" title="Contributing"
              >next</a> |</li>
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

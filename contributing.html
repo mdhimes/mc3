@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Contributing &mdash; MC3 2.2.6 documentation</title>
+    
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '2.2.6',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="MC3 2.2.6 documentation" href="index.html" />
+    <link rel="next" title="License" href="license.html" />
+    <link rel="prev" title="Optimization Tutorial" href="fittutorial.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="fittutorial.html" title="Optimization Tutorial"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="contributing">
+<span id="id1"></span><h1>Contributing<a class="headerlink" href="#contributing" title="Permalink to this headline">¶</a></h1>
+<p>Feel free to contribute to this repository by submitting code pull
+requests, raising issues, or emailing the administrator directly.</p>
+<div class="section" id="raising-issues">
+<h2>Raising Issues<a class="headerlink" href="#raising-issues" title="Permalink to this headline">¶</a></h2>
+<p>Whenever you want to raise a new issue, make sure that it has not
+already been mentioned in the issues list.  If an issue exists, consider
+adding a comment if you have extra information that further describes
+the issue or may help to solve it.</p>
+<p>If you are reporting a bug, make sure to be fully descriptive of the
+bug, including steps to reproduce the bug, error output logs, etc.</p>
+<p>Make sure to designate appropriate tags to your issue.</p>
+<p>An issue asking for a new functionality must include the <code class="docutils literal"><span class="pre">wish</span> <span class="pre">list</span></code>
+tag.  These issues must include an explanation as to why is such
+feature necessary.  Note that if you also provide ideas, literature
+references, etc. that contribute to the implementation of the
+requested functionality, there will be more chances of the issue being
+solved.</p>
+</div>
+<div class="section" id="programming-style">
+<h2>Programming Style<a class="headerlink" href="#programming-style" title="Permalink to this headline">¶</a></h2>
+<p>Everyone has his/her own programming style, I respect that.  However,
+some people have terrible style (see
+<a class="reference external" href="http://www.abstrusegoose.com/432">http://www.abstrusegoose.com/432</a>).  Following good coding practices
+make everyone happy, it will increase the chances of your code being
+added to the main repository, and it will make me work less.  I strongly
+recommend the following programming guidelines:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Always keep it simple.</li>
+<li><strong>Lines are strictly 80 character long, no more.</strong></li>
+<li><strong>Never ever! use tabs (for any reason, just don&#8217;t).</strong></li>
+<li>Avoid hard-coding values at all cost.</li>
+<li>One&#8211;two character variable names are too short to be meaningful.</li>
+<li>Indent with 2 spaces.</li>
+<li>Put whitespace around operators and after commas.</li>
+<li>Separate lines (within a common block of code) by at most 0 whitespace lines (yes, zero).</li>
+<li>Separate blocks of code by at most 1 whitespace lines.</li>
+<li>Separate methods/functions/clasess by at most 2 whitespace lines.</li>
+<li>Use a header comment (1+ whole line) to describe a code block.</li>
+<li>Use in-line comments to describe code withing a block.</li>
+<li>Necessary contraptions require meaningful comments.</li>
+<li>Always, always make a docstring.</li>
+<li>Use <code class="docutils literal"><span class="pre">is</span></code> to compare with <code class="docutils literal"><span class="pre">None</span></code>, <code class="docutils literal"><span class="pre">True</span></code>, and <code class="docutils literal"><span class="pre">False</span></code>.</li>
+<li>Limit try clauses to the bare minimum.</li>
+</ul>
+</div></blockquote>
+<p>Good pieces of code that do not follow these principles will
+still be gratefully accepted, but with a frowny face.</p>
+</div>
+<div class="section" id="pull-requests">
+<h2>Pull Requests<a class="headerlink" href="#pull-requests" title="Permalink to this headline">¶</a></h2>
+<p>To submit a pull request you will need to first (only once) fork the
+repository into your account.  Edit the changes in your
+repository.  When making a commit, always include a descriptive message
+of what changed.  Then, click on the pull request button.</p>
+<p>More on this later, which branch to pull, git Work flow, etc.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="index.html">Table Of Contents</a></h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fittutorial.html">Optimization Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#raising-issues">Raising Issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#programming-style">Programming Style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pull-requests">Pull Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="fittutorial.html"
+                        title="previous chapter">Optimization Tutorial</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="license.html"
+                        title="next chapter">License</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="license.html" title="License"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="fittutorial.html" title="Optimization Tutorial"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2015-2016, Patricio Cubillos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+    </div>
+  </body>
+</html>
