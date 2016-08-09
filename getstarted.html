@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started &mdash; MC3 2.2.6 documentation</title>
+    <title>Getting Started &mdash; MC3 2.2.7 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.6',
+        VERSION:     '2.2.7',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.6 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.7 documentation" href="index.html" />
     <link rel="next" title="MCMC Tutorial" href="mctutorial.html" />
     <link rel="prev" title="Multi-Core Markov-Chain Monte Carlo (MC3)" href="index.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="index.html" title="Multi-Core Markov-Chain Monte Carlo (MC3)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.7 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,7 +57,7 @@
 <p><code class="docutils literal"><span class="pre">MC3</span></code> (version 2.2) is known to work on Unix/Linux (Ubuntu)
 and OSX (10.9+) machines, with the following software:</p>
 <ul class="simple">
-<li>Python (version 2.7+ and 3.4+)</li>
+<li>Python (version 2.7+ or 3.4+)</li>
 <li>Numpy (version 1.8.2+)</li>
 <li>Scipy (version 0.17.1+)</li>
 <li>Matplotlib (version 1.3.1+)</li>
@@ -70,7 +70,7 @@ however, we do not guarantee nor provide support for that.</p>
 <p>To obtain the latest MCcubed code, clone the repository to your local
 machine with the following terminal commands.
 First, keep track of the folder where you are putting <code class="docutils literal"><span class="pre">MC3</span></code>:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="nv">topdir</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nv">topdir</span><span class="o">=</span><span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>
 git clone https://github.com/pcubillos/MCcubed
 </pre></div>
 </div>
@@ -78,13 +78,14 @@ git clone https://github.com/pcubillos/MCcubed
 <div class="section" id="compile">
 <h2>Compile<a class="headerlink" href="#compile" title="Permalink to this headline">¶</a></h2>
 <p>Compile the C-extensions of the package and the documentation:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="nb">cd</span> <span class="nv">$topdir</span>/MCcubed/
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>/MCcubed/
 make
 </pre></div>
 </div>
-<p>A pdf version of this documentation will be available in <code class="docutils literal"><span class="pre">$topdir/MCcubed/docs/latex/MC3.pdf</span></code>.
-To remove the program binaries, execute (from the respective directories):</p>
-<div class="highlight-shell"><div class="highlight"><pre>make clean
+<p>A pdf version of this documentation will be available in
+<code class="docutils literal"><span class="pre">$topdir/MCcubed/docs/latex/MC3.pdf</span></code>.  To remove the program
+binaries, execute (from the respective directories):</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>make clean
 </pre></div>
 </div>
 </div>
@@ -95,67 +96,74 @@ the Python interpreter.
 This example fits a quadratic polynomial curve to a dataset.
 First create a folder to run the example (alternatively, run the example
 from any location, but adjust the paths of the Python script):</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="nb">cd</span> <span class="nv">$topdir</span>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>
 mkdir run01
-<span class="nb">cd </span>run01
+<span class="nb">cd</span> run01
 </pre></div>
 </div>
-<p>Now start a Python interactive session.  This script imports the necesary modules, creates a noisy dataset, and runs the MCMC:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">sys</span>
+<p>Now start a Python interactive session.  This script imports the
+necesary modules, creates a noisy dataset, and runs the MCMC:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;../MCcubed/&quot;</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../MCcubed/&quot;</span><span class="p">)</span>
 <span class="kn">import</span> <span class="nn">MCcubed</span> <span class="kn">as</span> <span class="nn">mc3</span>
 
-<span class="c"># Get function to model (and sample):</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&quot;../MCcubed/examples/models/&quot;</span><span class="p">)</span>
+<span class="c1"># Get function to model (and sample):</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;../MCcubed/examples/models/&quot;</span><span class="p">)</span>
 <span class="kn">from</span> <span class="nn">quadratic</span> <span class="kn">import</span> <span class="n">quad</span>
 
-<span class="c"># Create a synthetic dataset:</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>         <span class="c"># Independent model variable</span>
-<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>                  <span class="c"># True-underlying model parameters</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c"># Noiseless model</span>
-<span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>          <span class="c"># Data points uncertainty</span>
-<span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c"># Noise for the data</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">error</span>                     <span class="c"># Noisy data set</span>
+<span class="c1"># Create a synthetic dataset:</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>         <span class="c1"># Independent model variable</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]</span>                  <span class="c1"># True-underlying model parameters</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="n">p0</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>                      <span class="c1"># Noiseless model</span>
+<span class="n">uncert</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>          <span class="c1"># Data points uncertainty</span>
+<span class="n">error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">uncert</span><span class="p">)</span>  <span class="c1"># Noise for the data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">y</span> <span class="o">+</span> <span class="n">error</span>                     <span class="c1"># Noisy data set</span>
 
-<span class="c"># Fit the quad polynomial coefficients:</span>
-<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>  <span class="c"># Initial guess of fitting params.</span>
+<span class="c1"># Fit the quad polynomial coefficients:</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])</span>  <span class="c1"># Initial guess of fitting params.</span>
 <span class="n">stepsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">])</span>
 
-<span class="c"># Run the MCMC:</span>
-<span class="n">bestp</span><span class="p">,</span> <span class="n">uncertp</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">Zchain</span><span class="p">,</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">mcmc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">quad</span><span class="p">,</span>
-   <span class="n">indparams</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1"># Run the MCMC:</span>
+<span class="n">bestp</span><span class="p">,</span> <span class="n">CRlo</span><span class="p">,</span> <span class="n">CRhi</span><span class="p">,</span> <span class="n">stdp</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">Zchain</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">mcmc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span>
+    <span class="n">func</span><span class="o">=</span><span class="n">quad</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span>
+    <span class="n">nsamples</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The code will return the best-fitting values (<code class="docutils literal"><span class="pre">bestp</span></code>), the lower
+and upper boundaries of the 68%-credible region (<code class="docutils literal"><span class="pre">CRlo</span></code> and
+<code class="docutils literal"><span class="pre">CRhi</span></code>, with respect to <code class="docutils literal"><span class="pre">bestp</span></code>), the standard deviation of the
+marginal posteriors (<code class="docutils literal"><span class="pre">stdp</span></code>), the posterior sample (<code class="docutils literal"><span class="pre">posterior</span></code>),
+and the chain index for each posterior sample (<code class="docutils literal"><span class="pre">Zchain</span></code>).</p>
 <div class="section" id="outputs">
 <h3>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h3>
 <p>That&#8217;s it, now let&#8217;s see the results.  <code class="docutils literal"><span class="pre">MC3</span></code> will print out to screen a
 progress report every 10% of the MCMC run, showing the time, number of
 times a parameter tried to go beyond the boundaries, the current
 best-fitting values, and corresponding <span class="math">\(\chi^{2}\)</span>; for example:</p>
-<div class="highlight-none"><div class="highlight"><pre>::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+<div class="highlight-none"><div class="highlight"><pre><span></span>::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
   Multi-Core Markov-Chain Monte Carlo (MC3).
-  Version 2.2.0.
+  Version 2.2.7.
   Copyright (c) 2015-2016 Patricio Cubillos and collaborators.
   MC3 is open-source software under the MIT license (see LICENSE).
 ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-Start MCMC chains  (Sun May  1 14:52:53 2016)
+Start MCMC chains  (Tue Aug  9 12:55:52 2016)
 
-[:         ]  10.0% completed  (Sun May  1 14:52:53 2016)
+[:         ]  10.0% completed  (Tue Aug  9 12:55:52 2016)
 Out-of-bound Trials:
 [0 0 0]
-Best Parameters: (chisq=1061.6057)
-[ 3.10350813 -2.46601555  0.50964946]
+Best Parameters: (chisq=980.3583)
+[ 2.8813145  -2.32364362  0.48817841]
 
 ...
 
-[::::::::::] 100.0% completed  (Sun May  1 14:52:57 2016)
+[::::::::::] 100.0% completed  (Tue Aug  9 12:55:54 2016)
 Out-of-bound Trials:
 [0 0 0]
-Best Parameters: (chisq=1061.5782)
-[ 3.11692156 -2.47161143  0.50981927]
+Best Parameters: (chisq=980.3512)
+[ 2.88618334 -2.32547037  0.48838456]
 
 Fin, MCMC Summary:
 ------------------
@@ -165,45 +173,47 @@ Fin, MCMC Summary:
   Burned in iterations per chain:       1000
   Thinning factor:                         1
   MCMC sample (thinned, burned) size:  93002
-  Acceptance rate:   28.53%
+  Acceptance rate:   28.86%
 
-  Best-fit params   Uncertainties        S/N      Sample Mean   Note
-    3.1169216e+00   1.2041874e-01      25.88    3.1195138e+00
-   -2.4716114e+00   6.9075099e-02      35.78   -2.4727370e+00
-    5.0981927e-01   8.4245390e-03      60.52    5.1003106e-01
+      Best fit  Lo Cred.Reg.  Hi Cred.Reg.          Mean     Std. dev.      S/N
+  2.886183e+00 -1.171505e-01  1.243491e-01  2.888861e+00  1.214685e-01     23.8
+ -2.325470e+00 -7.163619e-02  6.685455e-02 -2.327076e+00  6.960634e-02     33.4
+  4.883846e-01 -8.061723e-03  8.873021e-03  4.886667e-01  8.492295e-03     57.5
 
-  Best-parameter&#39;s chi-squared:     1061.5782
-  Bayesian Information Criterion:   1082.3014
-  Reduced chi-squared:                 1.0648
-  Standard deviation of residuals:  2.849
+  Best-parameter&#39;s chi-squared:      980.3512
+  Bayesian Information Criterion:   1001.0745
+  Reduced chi-squared:                 0.9833
+  Standard deviation of residuals:  2.72626
 </pre></div>
 </div>
-<p>At the end of the MCMC run, <code class="docutils literal"><span class="pre">MC3</span></code> displays a summary of the MCMC sample,
-best-fitting parameters, uncertainties, mean values, and other statistics.</p>
+<p>At the end of the MCMC run, <code class="docutils literal"><span class="pre">MC3</span></code> displays a summary of the MCMC
+sample, best-fitting parameters, credible-region boundaries, posterior
+mean and standard deviation, among other statistics.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">More information will be displayed, depending on the MCMC configuration (see the <a class="reference internal" href="mctutorial.html#mctutorial"><span>MCMC Tutorial</span></a>).</p>
+<p class="last">More information will be displayed, depending on the MCMC
+configuration (see the <a class="reference internal" href="mctutorial.html#mctutorial"><span>MCMC Tutorial</span></a>).</p>
 </div>
 <p>Additionally, the user has the option to generate several plots of the MCMC
 sample: the best-fitting model and data curves, parameter traces, and
 marginal and pair-wise posteriors (these plots can also be generated
 automatically with the MCMC run by setting <code class="docutils literal"><span class="pre">plots=True</span></code>).
 The plots sub-package provides the plotting functions:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c"># Plot best-fitting model and binned data:</span>
-<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&quot;Best-fitting Model&quot;</span><span class="p">,</span>
-                   <span class="n">savefile</span><span class="o">=</span><span class="s">&quot;quad_bestfit.png&quot;</span><span class="p">)</span>
-<span class="c"># Plot trace plot:</span>
-<span class="n">parname</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;constant&quot;</span><span class="p">,</span> <span class="s">&quot;linear&quot;</span><span class="p">,</span> <span class="s">&quot;quadratic&quot;</span><span class="p">]</span>
-<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">Zchain</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&quot;Fitting-parameter Trace Plots&quot;</span><span class="p">,</span>
-                <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="s">&quot;quad_trace.png&quot;</span><span class="p">)</span>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="c1"># Plot best-fitting model and binned data:</span>
+<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">modelfit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncert</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Best-fitting Model&quot;</span><span class="p">,</span>
+                   <span class="n">savefile</span><span class="o">=</span><span class="s2">&quot;quad_bestfit.png&quot;</span><span class="p">)</span>
+<span class="c1"># Plot trace plot:</span>
+<span class="n">parname</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;quadratic&quot;</span><span class="p">]</span>
+<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">Zchain</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Fitting-parameter Trace Plots&quot;</span><span class="p">,</span>
+                <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="s2">&quot;quad_trace.png&quot;</span><span class="p">)</span>
 
-<span class="c"># Plot pairwise posteriors:</span>
-<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">pairwise</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&quot;Pairwise posteriors&quot;</span><span class="p">,</span> <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span>
-                   <span class="n">savefile</span><span class="o">=</span><span class="s">&quot;quad_pairwise.png&quot;</span><span class="p">)</span>
+<span class="c1"># Plot pairwise posteriors:</span>
+<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">pairwise</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Pairwise posteriors&quot;</span><span class="p">,</span> <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span>
+                   <span class="n">savefile</span><span class="o">=</span><span class="s2">&quot;quad_pairwise.png&quot;</span><span class="p">)</span>
 
-<span class="c"># Plot marginal posterior histograms:</span>
-<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s">&quot;Marginal posterior histograms&quot;</span><span class="p">,</span>
-                    <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="s">&quot;quad_hist.png&quot;</span><span class="p">)</span>
+<span class="c1"># Plot marginal posterior histograms:</span>
+<span class="n">mc3</span><span class="o">.</span><span class="n">plots</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">posterior</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Marginal posterior histograms&quot;</span><span class="p">,</span>
+                    <span class="n">parname</span><span class="o">=</span><span class="n">parname</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="s2">&quot;quad_hist.png&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="_images/quad_bestfit.png"><img alt="_images/quad_bestfit.png" src="_images/quad_bestfit.png" style="width: 50%;" /></a>
@@ -223,18 +233,18 @@ MCMC run (see <a class="reference external" href="http://pcubillos.github.io/MCc
 (<a class="reference external" href="https://github.com/pcubillos/MCcubed/blob/master/examples/demo02/">demo02</a>)
 shows a basic MCMC run from the shell prompt.
 To start, create a working directory to place the files and execute the program:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="nb">cd</span> <span class="nv">$topdir</span>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>
 mkdir run02
-<span class="nb">cd </span>run02
+<span class="nb">cd</span> run02
 </pre></div>
 </div>
 <p>Copy the demo files (configuration and data files) to the run folder:</p>
-<div class="highlight-shell"><div class="highlight"><pre>cp <span class="nv">$topdir</span>/MCcubed/examples/demo02/* .
+<div class="highlight-shell"><div class="highlight"><pre><span></span>cp <span class="nv">$topdir</span>/MCcubed/examples/demo02/* .
 </pre></div>
 </div>
 <p>Call the <code class="docutils literal"><span class="pre">MC3</span></code> executable, providing the configuration file as
 command-line argument:</p>
-<div class="highlight-shell"><div class="highlight"><pre><span class="nv">$topdir</span>/MCcubed/mc3.py -c MCMC.cfg
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nv">$topdir</span>/MCcubed/mc3.py -c MCMC.cfg
 </pre></div>
 </div>
 </div>
@@ -300,7 +310,7 @@ command-line argument:</p>
         <li class="right" >
           <a href="index.html" title="Multi-Core Markov-Chain Monte Carlo (MC3)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.6 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.7 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
