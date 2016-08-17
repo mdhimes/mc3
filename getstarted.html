@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Getting Started &mdash; MC3 2.2.7 documentation</title>
+    <title>Getting Started &mdash; MC3 2.2.8 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.7',
+        VERSION:     '2.2.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.7 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.8 documentation" href="index.html" />
     <link rel="next" title="MCMC Tutorial" href="mctutorial.html" />
     <link rel="prev" title="Multi-Core Markov-Chain Monte Carlo (MC3)" href="index.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="index.html" title="Multi-Core Markov-Chain Monte Carlo (MC3)"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.7 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.8 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -77,15 +77,21 @@ git clone https://github.com/pcubillos/MCcubed
 </div>
 <div class="section" id="compile">
 <h2>Compile<a class="headerlink" href="#compile" title="Permalink to this headline">¶</a></h2>
-<p>Compile the C-extensions of the package and the documentation:</p>
+<p>To compile the C-extensions of the package run:</p>
 <div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>/MCcubed/
 make
 </pre></div>
 </div>
-<p>A pdf version of this documentation will be available in
+<p>To compile the documentation of the package, run:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>/MCcubed/docs
+make latexpdf
+</pre></div>
+</div>
+<p>A pdf version of this documentation will be available at
 <code class="docutils literal"><span class="pre">$topdir/MCcubed/docs/latex/MC3.pdf</span></code>.  To remove the program
-binaries, execute (from the respective directories):</p>
-<div class="highlight-shell"><div class="highlight"><pre><span></span>make clean
+binaries, run:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="nb">cd</span> <span class="nv">$topdir</span>/MCcubed/
+make clean
 </pre></div>
 </div>
 </div>
@@ -310,7 +316,7 @@ command-line argument:</p>
         <li class="right" >
           <a href="index.html" title="Multi-Core Markov-Chain Monte Carlo (MC3)"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.7 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.8 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
