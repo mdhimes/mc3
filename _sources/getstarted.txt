@@ -135,10 +135,9 @@ best-fitting values, and corresponding :math:`\chi^{2}`; for example:
     Copyright (c) 2015-2016 Patricio Cubillos and collaborators.
     MC3 is open-source software under the MIT license (see LICENSE).
   ::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-  
-  Yippee Ki Yay Monte Carlo!
+
   Start MCMC chains  (Fri Sep  2 12:12:55 2016)
-  
+
   [:         ]  10.0% completed  (Fri Sep  2 12:12:55 2016)
   Out-of-bound Trials:
   [0 0 0]
@@ -152,7 +151,7 @@ best-fitting values, and corresponding :math:`\chi^{2}`; for example:
   [0 0 0]
   Best Parameters: (chisq=958.6192)
   [ 3.15477168 -2.4840968   0.511011  ]
-  
+
   Fin, MCMC Summary:
   ------------------
     Total number of samples:            100002
@@ -162,12 +161,12 @@ best-fitting values, and corresponding :math:`\chi^{2}`; for example:
     Thinning factor:                         1
     MCMC sample (thinned, burned) size:  93002
     Acceptance rate:   27.29%
-  
+
         Best fit  Lo Cred.Reg.  Hi Cred.Reg.          Mean     Std. dev.      S/N
     3.154772e+00 -1.148446e-01  1.208576e-01  3.158164e+00  1.192656e-01     26.5
    -2.484097e+00 -6.988181e-02  6.490437e-02 -2.487244e+00  6.816345e-02     36.4
     5.110110e-01 -7.921301e-03  8.774663e-03  5.115275e-01  8.345855e-03     61.2
-  
+
     Best-parameter's chi-squared:     958.6192
     Bayesian Information Criterion:   979.3424
     Reduced chi-squared:                0.9615
