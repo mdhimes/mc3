@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Multi-Core Markov-Chain Monte Carlo (MC3) &mdash; MC3 2.2.11 documentation</title>
+    <title>Multi-Core Markov-Chain Monte Carlo (MC3) &mdash; MC3 2.2.14 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.11',
+        VERSION:     '2.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.11 documentation" href="#" />
+    <link rel="top" title="MC3 2.2.14 documentation" href="#" />
     <link rel="next" title="Getting Started" href="getstarted.html" /> 
   </head>
   <body role="document">
@@ -37,7 +37,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">MC3 2.2.11 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">MC3 2.2.14 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -60,7 +60,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Web Site:</th><td class="field-body"><a class="reference external" href="https://github.com/pcubillos/MCcubed">https://github.com/pcubillos/MCcubed</a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">September 02, 2016</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">October 06, 2016</td>
 </tr>
 </tbody>
 </table>
@@ -103,6 +103,7 @@ development of this package.</p>
 <li>Nate Lust (UCF)</li>
 <li><a class="reference external" href="http://aj-foster.com">AJ Foster</a> (UCF)</li>
 <li>Madison Stemm (UCF)</li>
+<li>Tom Loredo (Cornell)</li>
 <li>Kevin Stevenson (UCF)</li>
 <li>Chris Campo (UCF)</li>
 <li>Matt Hardin (UCF)</li>
@@ -117,35 +118,34 @@ development of this package.</p>
 <li class="toctree-l2"><a class="reference internal" href="getstarted.html#system-requirements">System Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstarted.html#install">Install</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getstarted.html#compile">Compile</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getstarted.html#example-1-interactive">Example 1 (Interactive)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getstarted.html#example-1-interactive">Example 1 Interactive</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="getstarted.html#outputs">Outputs</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="getstarted.html#example-2-shell-run">Example 2 (Shell Run)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getstarted.html#example-2-shell-run">Example 2: Shell Run</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="mctutorial.html#argument-inputs">Argument Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mctutorial.html#configuration-files">Configuration Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="mctutorial.html#mcmc-run-configuration">MCMC-run Configuration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#data-and-data-uncertainties">Data and Data Uncertainties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mctutorial.html#mcmc-run">MCMC Run</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#data">Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#modeling-function">Modeling Function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#fitting-parameters">Fitting Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#stepsize-fixed-and-shared-paramerers">Stepsize, Fixed, and Shared Paramerers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#parameter-priors">Parameter Priors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#random-walk">Random Walk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#mcmc-chains-configuration">MCMC Chains Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#mcmc-config">MCMC Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#optimization">Optimization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#gelman-rubin-convergence-test">Gelman-Rubin Convergence Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#convergence-test">Convergence Test</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#wavelet-likelihood-mcmc">Wavelet-Likelihood MCMC</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#file-outputs">File Outputs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="mctutorial.html#returned-values">Returned Values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#resume-a-previous-mc3-run">Resume a previous MC3 Run</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="mctutorial.html#inputs-from-files">Inputs from Files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#data">Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#id8">Fitting Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#datafile">Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mctutorial.html#id9">Fitting Parameters</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="mctutorial.html#references">References</a></li>
@@ -164,6 +164,11 @@ development of this package.</p>
 <li class="toctree-l2"><a class="reference internal" href="fittutorial.html#example">Example</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="timeaveraging.html">Time Averaging</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="timeaveraging.html#example">Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="timeaveraging.html#references">References</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#raising-issues">Raising Issues</a></li>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#programming-style">Programming Style</a></li>
@@ -178,8 +183,8 @@ development of this package.</p>
 <h1>Be Kind<a class="headerlink" href="#be-kind" title="Permalink to this headline">¶</a></h1>
 <dl class="docutils">
 <dt>Please cite this paper if you found <code class="docutils literal"><span class="pre">MC3</span></code> useful for your research:</dt>
-<dd><a class="reference external" href="https://github.com/pcubillos/MCcubed/lalala">Cubillos et al. 2016: On the Correlated Noise Analyses Applied to
-Exoplanet Light Curves</a>, submitted.</dd>
+<dd><a class="reference external" href="https://arxiv.org/abs/1610.01336">Cubillos et al. 2016: On the Correlated-noise Analyses Applied to
+Exoplanet Light Curves</a>, Apj.</dd>
 </dl>
 <p>We welcome your feedback, but do not necessarily guarantee support.
 Please send feedback or inquiries to:</p>
@@ -208,6 +213,7 @@ Please send feedback or inquiries to:</p>
 <li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="fittutorial.html">Optimization Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timeaveraging.html">Time Averaging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">License</a></li>
 </ul>
@@ -241,7 +247,7 @@ Please send feedback or inquiries to:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">MC3 2.2.11 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="#">MC3 2.2.14 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

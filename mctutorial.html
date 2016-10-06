@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.2.11 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 2.2.14 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.11',
+        VERSION:     '2.2.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.11 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.14 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.11 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.14 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -93,13 +93,13 @@ The following code block shows an example for an MC3 configuration file:</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="mcmc-run-configuration">
-<h2>MCMC-run Configuration<a class="headerlink" href="#mcmc-run-configuration" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="mcmc-run">
+<h2>MCMC Run<a class="headerlink" href="#mcmc-run" title="Permalink to this headline">¶</a></h2>
 <p>This example describes the basic MCMC argument configuration.
 The following sub-sections make up a script meant to be run from the Python
 interpreter.  The complete example script is located at <a class="reference external" href="https://github.com/pcubillos/MCcubed/blob/master/examples/tutorial01/tutorial01.py">tutorial01</a>.</p>
-<div class="section" id="data-and-data-uncertainties">
-<h3>Data and Data Uncertainties<a class="headerlink" href="#data-and-data-uncertainties" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="data">
+<h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">data</span></code> argument (required) defines the dataset to be fitted.
 This argument can be either a 1D float ndarray or the filename (a string)
 where the data array is located.</p>
@@ -215,7 +215,7 @@ the ingress and egress times.</p>
 sets the standard deviation, <span class="math">\(\sigma\)</span>, of the Gaussian proposal jump for
 the given parameter (see Eq. <a href="#equation-gaussprop">(4)</a>).</p>
 <p>Lastly, <code class="docutils literal"><span class="pre">stepsize</span></code> sets the standard deviation of the initial sampling
-for the chains (see <a class="reference internal" href="#mcchains"><span>MCMC Chains Configuration</span></a> section).</p>
+for the chains (see <a class="reference internal" href="#mcchains"><span>MCMC Config</span></a> section).</p>
 </div>
 <div class="section" id="parameter-priors">
 <h3>Parameter Priors<a class="headerlink" href="#parameter-priors" title="Permalink to this headline">¶</a></h3>
@@ -299,8 +299,8 @@ argument:</p>
 <span class="eqno">(4)</span>\[q(\theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}
             \exp \left( -\frac{(\theta-\theta_0)^2}{2 \sigma^2}\right)\]</div>
 </div>
-<div class="section" id="mcmc-chains-configuration">
-<span id="mcchains"></span><h3>MCMC Chains Configuration<a class="headerlink" href="#mcmc-chains-configuration" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="mcmc-config">
+<span id="mcchains"></span><h3>MCMC Config<a class="headerlink" href="#mcmc-config" title="Permalink to this headline">¶</a></h3>
 <p>The following arguments set the MCMC chains configuration:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">nsamples</span> <span class="o">=</span>  <span class="mf">1e5</span>     <span class="c1"># Number of MCMC samples to compute</span>
 <span class="n">nchains</span>  <span class="o">=</span>    <span class="mi">7</span>     <span class="c1"># Number of parallel chains</span>
@@ -370,8 +370,8 @@ uncertainties by a common scale factor.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="gelman-rubin-convergence-test">
-<h3>Gelman-Rubin Convergence Test<a class="headerlink" href="#gelman-rubin-convergence-test" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="convergence-test">
+<h3>Convergence Test<a class="headerlink" href="#convergence-test" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">grtest</span></code> argument (optional, boolean, default=False) is a flag that
 indicates MC3 to run the Gelman-Rubin convergence test for the MCMC sample of
 fitting parameters.
@@ -473,10 +473,8 @@ include the values for all model parameters, including fixed and
 shared parameters, whereas <code class="docutils literal"><span class="pre">posterior</span></code> includes only
 the free parameters.  Be careful with the dimesions.</p>
 </div>
-</div>
-<div class="section" id="resume-a-previous-mc3-run">
-<h3>Resume a previous MC3 Run<a class="headerlink" href="#resume-a-previous-mc3-run" title="Permalink to this headline">¶</a></h3>
-<p>TBD</p>
+<blockquote>
+<div>TBD</div></blockquote>
 </div>
 </div>
 <div class="section" id="inputs-from-files">
@@ -485,8 +483,8 @@ the free parameters.  Be careful with the dimesions.</p>
 <code class="docutils literal"><span class="pre">stepsize</span></code>, <code class="docutils literal"><span class="pre">prior</span></code>, <code class="docutils literal"><span class="pre">priorlow</span></code>, and <code class="docutils literal"><span class="pre">priorup</span></code> input arrays
 can be optionally be given as input file.
 Furthermore, multiple input arguments can be combined into a single file.</p>
-<div class="section" id="data">
-<span id="datafile"></span><h3>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="datafile">
+<span id="id8"></span><h3>Data<a class="headerlink" href="#datafile" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">data</span></code>, <code class="docutils literal"><span class="pre">uncert</span></code>, and <code class="docutils literal"><span class="pre">indparams</span></code> inputs can be provided as
 binary <code class="docutils literal"><span class="pre">numpy</span></code> <code class="docutils literal"><span class="pre">.npz</span></code> files.
 <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">uncert</span></code> can be stored together into a single file.
@@ -523,8 +521,8 @@ gives an example of how to create <code class="docutils literal"><span class="pr
 </pre></div>
 </div>
 </div>
-<div class="section" id="id8">
-<h3>Fitting Parameters<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id9">
+<h3>Fitting Parameters<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">params</span></code>, <code class="docutils literal"><span class="pre">pmin</span></code>, <code class="docutils literal"><span class="pre">pmax</span></code>, <code class="docutils literal"><span class="pre">stepsize</span></code>,
 <code class="docutils literal"><span class="pre">prior</span></code>, <code class="docutils literal"><span class="pre">priorlow</span></code>, and <code class="docutils literal"><span class="pre">priorup</span></code> inputs
 can be provided as plain ASCII files.
@@ -625,25 +623,24 @@ routine:</p>
 <li class="toctree-l1 current"><a class="current reference internal" href="">MCMC Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#argument-inputs">Argument Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-files">Configuration Files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mcmc-run-configuration">MCMC-run Configuration</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#data-and-data-uncertainties">Data and Data Uncertainties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mcmc-run">MCMC Run</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#data">Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#modeling-function">Modeling Function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fitting-parameters">Fitting Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stepsize-fixed-and-shared-paramerers">Stepsize, Fixed, and Shared Paramerers</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameter-priors">Parameter Priors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#random-walk">Random Walk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#mcmc-chains-configuration">MCMC Chains Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mcmc-config">MCMC Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optimization">Optimization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#gelman-rubin-convergence-test">Gelman-Rubin Convergence Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convergence-test">Convergence Test</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#wavelet-likelihood-mcmc">Wavelet-Likelihood MCMC</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-outputs">File Outputs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#returned-values">Returned Values</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#resume-a-previous-mc3-run">Resume a previous MC3 Run</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#inputs-from-files">Inputs from Files</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#data">Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id8">Fitting Parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#datafile">Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Fitting Parameters</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#references">References</a></li>
@@ -689,7 +686,7 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.11 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.14 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
