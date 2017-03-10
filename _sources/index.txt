@@ -41,14 +41,14 @@ The following features are available when running ``MC3``:
 - Correlated-noise estimation with the Time-averaging or the Wavelet-based Likelihood estimation methods.
 
 .. note:: ``MC3`` should work for both Python2.7 and Python3!
-	     
+
 .. Note::  Attention!, there was a bug fix to the snooker random walk,
            where the posteriors were underestimating the parameter
            uncertainties as the number of free parameters
            increase.  For those who have used version 2.2 with the
-           snooker random walk, please update to the latest
+           snooker random walk, please update to the current
            version (v2.3).
-	       	  
+
 .. _team:
 
 Collaborators
