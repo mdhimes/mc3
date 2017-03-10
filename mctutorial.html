@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.2.18 documentation</title>
+    <title>MCMC Tutorial &#8212; MC3 2.2.22 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.2.18',
+        VERSION:     '2.2.22',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.2.18 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.2.22 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.18 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.22 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -122,7 +122,7 @@ This argument can be either a 1D float ndarray (same length of <code class="docu
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">See the <a class="reference internal" href="#datafile"><span>Data</span></a> Section below to find out how to set <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">uncert</span></code> as a filename.</p>
+<p class="last">See the <a class="reference internal" href="#datafile"><span class="std std-ref">Data</span></a> Section below to find out how to set <code class="docutils literal"><span class="pre">data</span></code> and <code class="docutils literal"><span class="pre">uncert</span></code> as a filename.</p>
 </div>
 </div>
 <div class="section" id="modeling-function">
@@ -211,11 +211,11 @@ index of the sharing parameter, e.g.:</p>
 values.  However, for an eclipe model for example, one may want to share
 the ingress and egress times.</p>
 </div>
-<p>Additionally, when <code class="docutils literal"><span class="pre">walk='mrw'</span></code> (see <a class="reference internal" href="#walk"><span>Random Walk</span></a> section), <code class="docutils literal"><span class="pre">stepsize</span></code>
+<p>Additionally, when <code class="docutils literal"><span class="pre">walk='mrw'</span></code> (see <a class="reference internal" href="#walk"><span class="std std-ref">Random Walk</span></a> section), <code class="docutils literal"><span class="pre">stepsize</span></code>
 sets the standard deviation, <span class="math">\(\sigma\)</span>, of the Gaussian proposal jump for
 the given parameter (see Eq. <a href="#equation-gaussprop">(4)</a>).</p>
 <p>Lastly, <code class="docutils literal"><span class="pre">stepsize</span></code> sets the standard deviation of the initial sampling
-for the chains (see <a class="reference internal" href="#mcchains"><span>MCMC Config</span></a> section).</p>
+for the chains (see <a class="reference internal" href="#mcchains"><span class="std std-ref">MCMC Config</span></a> section).</p>
 </div>
 <div class="section" id="parameter-priors">
 <h3>Parameter Priors<a class="headerlink" href="#parameter-priors" title="Permalink to this headline">¶</a></h3>
@@ -284,7 +284,7 @@ for the MCMC:</p>
 <span class="n">walk</span> <span class="o">=</span> <span class="s1">&#39;snooker&#39;</span>
 </pre></div>
 </div>
-<p>If <code class="docutils literal"><span class="pre">walk</span> <span class="pre">=</span> <span class="pre">'snooker'</span></code> (default, recommended), <code class="docutils literal"><span class="pre">MC3</span></code> will use the
+<p>If <code class="docutils literal"><span class="pre">walk</span> <span class="pre">=</span> <span class="pre">'snooker'</span></code> (default), <code class="docutils literal"><span class="pre">MC3</span></code> will use the
 DEMC-z algorithm with snooker propsals (see <a class="reference internal" href="#braakvrugt2008" id="id2">[BraakVrugt2008]</a>).
 If <code class="docutils literal"><span class="pre">walk</span> <span class="pre">=</span> <span class="pre">'demc'</span></code>, <code class="docutils literal"><span class="pre">MC3</span></code> will use Differential-Evolution
 MCMC algorithm (see <a class="reference internal" href="#terbraak2006" id="id3">[terBraak2006]</a>).</p>
@@ -298,12 +298,27 @@ argument:</p>
 <div class="math" id="equation-gaussprop">
 <span class="eqno">(4)</span>\[q(\theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}
             \exp \left( -\frac{(\theta-\theta_0)^2}{2 \sigma^2}\right)\]</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For <code class="docutils literal"><span class="pre">walk=snooker</span></code>, an MCMC works well from 3 chains.  For
+<code class="docutils literal"><span class="pre">walk=demc</span></code>, <a class="reference internal" href="#terbraak2006" id="id4">[terBraak2006]</a> suggest using <span class="math">\(2*d\)</span> chains,
+with <span class="math">\(d\)</span> the number of free parameters.</p>
+</div>
+<p>In my opinion, I recommend any of the <code class="docutils literal"><span class="pre">snooker</span></code> or <code class="docutils literal"><span class="pre">demc</span></code>
+algorithms, as they are more efficient than most others MCMC random
+walks.  From experience, when deciding between these two, consider
+that when the initial guess lays far from the lowest chi-square
+region, <code class="docutils literal"><span class="pre">snooker</span></code> seems to produce lower acceptance rates than ideal
+(which is solvable setting <code class="docutils literal"><span class="pre">leastsq=True</span></code>).  On the other hand,
+<code class="docutils literal"><span class="pre">demc</span></code> is limited to a high number of chains when there is a high
+number of free parameters.</p>
 </div>
 <div class="section" id="mcmc-config">
 <span id="mcchains"></span><h3>MCMC Config<a class="headerlink" href="#mcmc-config" title="Permalink to this headline">¶</a></h3>
 <p>The following arguments set the MCMC chains configuration:</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">nsamples</span> <span class="o">=</span>  <span class="mf">1e5</span>     <span class="c1"># Number of MCMC samples to compute</span>
 <span class="n">nchains</span>  <span class="o">=</span>    <span class="mi">7</span>     <span class="c1"># Number of parallel chains</span>
+<span class="n">nproc</span>    <span class="o">=</span>    <span class="mi">7</span>     <span class="c1"># Number of CPUs to use for chains (default: nchains)</span>
 <span class="n">burnin</span>   <span class="o">=</span> <span class="mi">1000</span>     <span class="c1"># Number of burned-in samples per chain</span>
 <span class="n">thinning</span> <span class="o">=</span>    <span class="mi">1</span>     <span class="c1"># Thinning factor for outputs</span>
 
@@ -312,19 +327,23 @@ argument:</p>
 <span class="n">hsize</span> <span class="o">=</span> <span class="mi">10</span>          <span class="c1"># Number of initial samples per chain</span>
 </pre></div>
 </div>
-<p><code class="docutils literal"><span class="pre">MC3</span></code> automatically runs in multiple processors, assigning one CPU per chain.
-Additionaly, the central MCMC hub will use one extra CPU.  Thus, the total
-number of CPUs used is <code class="docutils literal"><span class="pre">nchains</span> <span class="pre">+</span> <span class="pre">1</span></code>.</p>
-<p>The <code class="docutils literal"><span class="pre">nsamples</span></code> argument (optional, float, default=1e5) sets the total
-number of samples to compute.</p>
+<p>The <code class="docutils literal"><span class="pre">nsamples</span></code> argument (optional, float, default=1e5) sets the
+total number of samples to compute.  The approximate number of
+iterations run for each chain will be <code class="docutils literal"><span class="pre">nsamples/nchains</span></code>.</p>
 <p>The <code class="docutils literal"><span class="pre">nchains</span></code> argument (optional, integer, default=7) sets the number
 of parallel chains to use.  The number of iterations run for each chain
-will be <code class="docutils literal"><span class="pre">ceil(nsamples/nchains)</span></code>.</p>
+will be approximately <code class="docutils literal"><span class="pre">nsamples/nchains</span></code>.</p>
+<p><code class="docutils literal"><span class="pre">MC3</span></code> runs in multiple processors through the <code class="docutils literal"><span class="pre">mutiprocessing</span></code>
+package.  The <code class="docutils literal"><span class="pre">nproc</span></code> argument (optional, integer,
+default= <code class="docutils literal"><span class="pre">nchains</span></code>) sets the number CPUs to use for the chains.
+Additionaly, the central MCMC hub will use one extra CPU.  Thus, the
+total number of CPUs used is <code class="docutils literal"><span class="pre">nchains</span> <span class="pre">+</span> <span class="pre">1</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">For <code class="docutils literal"><span class="pre">walk='snooker'</span></code>, an MCMC works well from
-3 chains.  For <code class="docutils literal"><span class="pre">walk='demc'</span></code>, <a class="reference internal" href="#terbraak2006" id="id4">[terBraak2006]</a> suggest using
-<span class="math">\(2d\)</span> chains, with <span class="math">\(d\)</span> the number of free parameters.</p>
+<p class="last">If <code class="docutils literal"><span class="pre">nproc+1</span></code> is greater than the number of available CPUs
+in the machine (<code class="docutils literal"><span class="pre">nCPU</span></code>), <code class="docutils literal"><span class="pre">MC3</span></code> will set <code class="docutils literal"><span class="pre">nproc</span> <span class="pre">=</span>
+<span class="pre">nCPU-1</span></code>.  To keep a good balance, I recommend setting
+<code class="docutils literal"><span class="pre">nchains</span></code> equal to a multiple of <code class="docutils literal"><span class="pre">nproc</span></code>.</p>
 </div>
 <p>The <code class="docutils literal"><span class="pre">burnin</span></code> argument (optional, integer, default=0) sets the number
 of burned-in (removed) iterations at the beginning of each chain.</p>
@@ -357,7 +376,7 @@ indicates <code class="docutils literal"><span class="pre">MC3</span></code> to 
 <code class="docutils literal"><span class="pre">scipy.optimize.least_squares</span></code>.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The parameter boundaries (for TRF only, see <a class="reference internal" href="fittutorial.html#fittutorial"><span>Optimization Tutorial</span></a>),
+<p class="last">The parameter boundaries (for TRF only, see <a class="reference internal" href="fittutorial.html#fittutorial"><span class="std std-ref">Optimization Tutorial</span></a>),
 fixed and shared-values, and priors will apply for the minimization.</p>
 </div>
 <p>The <code class="docutils literal"><span class="pre">chisqscale</span></code> argument (optional, boolean, default=False) is a flag that
@@ -459,7 +478,7 @@ sample in <code class="docutils literal"><span class="pre">posterior</span></cod
     <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">pmin</span><span class="o">=</span><span class="n">pmin</span><span class="p">,</span> <span class="n">pmax</span><span class="o">=</span><span class="n">pmax</span><span class="p">,</span> <span class="n">stepsize</span><span class="o">=</span><span class="n">stepsize</span><span class="p">,</span>
     <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span> <span class="n">priorlow</span><span class="o">=</span><span class="n">priorlow</span><span class="p">,</span> <span class="n">priorup</span><span class="o">=</span><span class="n">priorup</span><span class="p">,</span>
     <span class="n">walk</span><span class="o">=</span><span class="n">walk</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">,</span>  <span class="n">nchains</span><span class="o">=</span><span class="n">nchains</span><span class="p">,</span>
-    <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
+    <span class="n">nproc</span><span class="o">=</span><span class="n">nproc</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
     <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
     <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
@@ -559,7 +578,7 @@ routine:</p>
 <span class="n">bestp</span><span class="p">,</span> <span class="n">CRlo</span><span class="p">,</span> <span class="n">CRhi</span><span class="p">,</span> <span class="n">stdp</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="n">Zchain</span> <span class="o">=</span> <span class="n">mc3</span><span class="o">.</span><span class="n">mcmc</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
     <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span> <span class="n">indparams</span><span class="o">=</span><span class="n">indparams</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
     <span class="n">walk</span><span class="o">=</span><span class="n">walk</span><span class="p">,</span> <span class="n">nsamples</span><span class="o">=</span><span class="n">nsamples</span><span class="p">,</span>  <span class="n">nchains</span><span class="o">=</span><span class="n">nchains</span><span class="p">,</span>
-    <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
+    <span class="n">nproc</span><span class="o">=</span><span class="n">nproc</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
     <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
     <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
@@ -618,7 +637,7 @@ routine:</p>
 <h3><a href="index.html">Table Of Contents</a></h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">MCMC Tutorial</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MCMC Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#argument-inputs">Argument Inputs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuration-files">Configuration Files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mcmc-run">MCMC Run</a><ul>
@@ -659,14 +678,11 @@ routine:</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -685,12 +701,12 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.18 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.2.22 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015-2017, Patricio Cubillos.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+        &#169; Copyright 2015-2017, Patricio Cubillos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
     </div>
   </body>
 </html>
