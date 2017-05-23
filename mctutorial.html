@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.3.3 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 2.3.4 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.3.3',
+        VERSION:     '2.3.4',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.3.3 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.3.4 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.4 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -426,36 +426,44 @@ For further information see <a class="reference internal" href="#carterwinn2009"
 <span class="n">plots</span>     <span class="o">=</span> <span class="bp">True</span>               <span class="c1"># Generate best-fit, trace, and posterior plots</span>
 <span class="n">rms</span>       <span class="o">=</span> <span class="bp">False</span>              <span class="c1"># Compute and plot the time-averaging test</span>
 <span class="n">full_output</span> <span class="o">=</span> <span class="bp">False</span>            <span class="c1"># Return the full posterior sample</span>
+<span class="n">chireturn</span> <span class="o">=</span> <span class="bp">False</span>              <span class="c1"># Return chi-square statistics</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">log</span></code> argument (optional, string, default=None)
+<p>The <code class="docutils literal"><span class="pre">log</span></code> argument (optional, string, default = <code class="docutils literal"><span class="pre">None</span></code>)
 sets the file name where to store <code class="docutils literal"><span class="pre">MC3</span></code>&#8216;s screen output.</p>
-<p>The <code class="docutils literal"><span class="pre">savefile</span></code> arguments (optional, string, default=None)
-set the file names where to store the MCMC outputs into a <code class="docutils literal"><span class="pre">.npz</span></code> file, with
-keywords <code class="docutils literal"><span class="pre">bestp</span></code>, <code class="docutils literal"><span class="pre">Z</span></code>, <code class="docutils literal"><span class="pre">Zchain</span></code>, and <code class="docutils literal"><span class="pre">Zchisq</span></code>.
-The files can be read with the <code class="docutils literal"><span class="pre">numpy.load()</span></code> function.
-<code class="docutils literal"><span class="pre">bestp</span></code> is a 1D array with the best-fitting parameters (including fixed
-and shared parameters), <code class="docutils literal"><span class="pre">Z</span></code> is a 2D array (Nsamples, Nfree) containing the
+<p>The <code class="docutils literal"><span class="pre">savefile</span></code> arguments (optional, string, default = <code class="docutils literal"><span class="pre">None</span></code>) set
+the file names where to store the MCMC outputs into a <code class="docutils literal"><span class="pre">.npz</span></code> file,
+with keywords <code class="docutils literal"><span class="pre">bestp</span></code>, <code class="docutils literal"><span class="pre">Z</span></code>, <code class="docutils literal"><span class="pre">Zchain</span></code>, and <code class="docutils literal"><span class="pre">Zchisq</span></code>.  The files
+can be read with the <code class="docutils literal"><span class="pre">numpy.load()</span></code> function.  <code class="docutils literal"><span class="pre">bestp</span></code> is a 1D
+array with the best-fitting parameters (including fixed and shared
+parameters), <code class="docutils literal"><span class="pre">Z</span></code> is a 2D array (Nsamples, Nfree) containing the
 thinned MCMC parameter posterior of the free parameters (excluding
-fixed and shared).  This array includes the initial and burnin samples.
-<code class="docutils literal"><span class="pre">Zchain</span></code> is a 1D array containing the chain index for each sample in <code class="docutils literal"><span class="pre">Z</span></code>.
-<code class="docutils literal"><span class="pre">Zchisq</span></code> is a 1D array containing the chi-squared value of each
-sample in <code class="docutils literal"><span class="pre">Z</span></code>.</p>
-<p>The <code class="docutils literal"><span class="pre">plots</span></code> argument (optional, boolean, default=False) is a flag that
-indicates MC3 to generate and store the data (along with the best-fitting
-model) plot,
-the MCMC-chain trace plot for each parameter,
-and the marginalized and pair-wise posterior plots.</p>
-<p>The <code class="docutils literal"><span class="pre">rms</span></code> argument (optional, boolean, default=False) is a flag that
-indicates <code class="docutils literal"><span class="pre">MC3</span></code> to compute the time-averaging test for time-correlated noise
-and generate a rms-vs-binsize plot (see <a class="reference internal" href="#winn2008" id="id7">[Winn2008]</a>).</p>
-<p>The <code class="docutils literal"><span class="pre">full_output</span></code> argument (optional, bool, default=False) flags the code
-to return the full posterior sampling array (<code class="docutils literal"><span class="pre">Z</span></code>), including the initial
-and burnin samples.  The posterior will still be thinned though.</p>
+fixed and shared).  This array includes the initial and burnin
+samples.  <code class="docutils literal"><span class="pre">Zchain</span></code> is a 1D array containing the chain index for each
+sample in <code class="docutils literal"><span class="pre">Z</span></code>.  <code class="docutils literal"><span class="pre">Zchisq</span></code> is a 1D array containing the chi-squared
+value of each sample in <code class="docutils literal"><span class="pre">Z</span></code>.</p>
+<p>The <code class="docutils literal"><span class="pre">plots</span></code> argument (optional, boolean, default = <code class="docutils literal"><span class="pre">False</span></code>) is a
+flag that indicates MC3 to generate and store the data (along with the
+best-fitting model) plot, the MCMC-chain trace plot for each
+parameter, and the marginalized and pair-wise posterior plots.</p>
+<p>The <code class="docutils literal"><span class="pre">rms</span></code> argument (optional, boolean, default = <code class="docutils literal"><span class="pre">False</span></code>) is a
+flag that indicates <code class="docutils literal"><span class="pre">MC3</span></code> to compute the time-averaging test for
+time-correlated noise and generate a rms-vs-binsize plot (see
+<a class="reference internal" href="#winn2008" id="id7">[Winn2008]</a>).</p>
+<p>The <code class="docutils literal"><span class="pre">full_output</span></code> argument (optional, bool, default = <code class="docutils literal"><span class="pre">False</span></code>)
+flags the code to return the full posterior sampling array (<code class="docutils literal"><span class="pre">Z</span></code>),
+including the initial and burnin samples.  The posterior will still be
+thinned though.</p>
+<p>If the <code class="docutils literal"><span class="pre">chireturn</span></code> argument (optional, bool, default = <code class="docutils literal"><span class="pre">False</span></code>) is
+<code class="docutils literal"><span class="pre">True</span></code>, <code class="docutils literal"><span class="pre">MC3</span></code> will return an additional tuple containing the
+chi-square stats (lowest <span class="math">\(\chi^{2}\)</span>, <span class="math">\(\chi^{2}_{\rm red}\)</span>
+, scaling factor to enforce <span class="math">\(\chi^{2}_{\rm red} = 1\)</span> , and the
+Bayesian Information Criterion BIC).</p>
 </div>
 <div class="section" id="returned-values">
 <h3>Returned Values<a class="headerlink" href="#returned-values" title="Permalink to this headline">¶</a></h3>
-<p>When run from a pyhton interactive session, <code class="docutils literal"><span class="pre">MC3</span></code> will return six arrays:</p>
+<p>When run from a pyhton interactive session, <code class="docutils literal"><span class="pre">MC3</span></code> will return a
+tuple with six elements (seven if <code class="docutils literal"><span class="pre">chireturn=True</span></code>, see above):</p>
 <ul class="simple">
 <li><code class="docutils literal"><span class="pre">bestp</span></code>: a 1D array with the best-fitting parameters (including
 fixed and shared parameters).</li>
@@ -706,7 +714,7 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.3 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.4 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
