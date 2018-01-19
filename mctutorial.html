@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>MCMC Tutorial &mdash; MC3 2.3.7 documentation</title>
+    <title>MCMC Tutorial &mdash; MC3 2.3.10 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.3.7',
+        VERSION:     '2.3.10',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.3.7 documentation" href="index.html" />
+    <link rel="top" title="MC3 2.3.10 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -41,7 +41,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.7 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.10 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -400,14 +400,27 @@ uncertainties by a common scale factor.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="convergence-test">
-<h3>Convergence Test<a class="headerlink" href="#convergence-test" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="convergence">
+<h3>Convergence<a class="headerlink" href="#convergence" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">grtest</span></code> argument (optional, boolean, default=False) is a flag that
 indicates MC3 to run the Gelman-Rubin convergence test for the MCMC sample of
 fitting parameters.
 Values larger than 1.01 are indicative of non-convergence.
 See <a class="reference internal" href="#gelmanrubin1992" id="id5">[GelmanRubin1992]</a> for further information.</p>
+<p>Additionally, the <code class="docutils literal"><span class="pre">grbreak</span></code> argument (optional, boolean,
+default=0.0) sets a convergence threshold to stop an MCMC when GR
+drops below <code class="docutils literal"><span class="pre">grbreak</span></code>.  Reasonable values seem to be <code class="docutils literal"><span class="pre">grbreak</span></code>
+~1.001&#8211;1.005.  The default behavior is not to break (<code class="docutils literal"><span class="pre">grbreak=0.0</span></code>).</p>
+<p>Lastly, the <code class="docutils literal"><span class="pre">grnmin</span></code> argument (optional, integer or float,
+default=0.5) sets a minimum number of valid samples (after burning and
+thinning) required for <code class="docutils literal"><span class="pre">grbreak</span></code>.  If <code class="docutils literal"><span class="pre">grnmin</span></code> is an integer,
+require at least <code class="docutils literal"><span class="pre">grnmin</span></code> samples to break out of the MCMC.  If
+<code class="docutils literal"><span class="pre">grnmin</span></code> is a float (in the range 0.0&#8211;1.0), require at least
+<code class="docutils literal"><span class="pre">grnmin</span></code> times the maximum possible number of valid samples to break
+out of the MCMC.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">grtest</span>  <span class="o">=</span> <span class="bp">True</span>   <span class="c1"># Calculate the GR convergence test</span>
+<span class="n">grbreak</span> <span class="o">=</span> <span class="mf">0.0</span>    <span class="c1"># GR threshold to stop the MCMC run</span>
+<span class="n">grnmin</span>  <span class="o">=</span> <span class="mf">0.5</span>    <span class="c1"># Minimum fraction or number of samples before grbreak</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -462,7 +475,8 @@ sets the file name where to store <code class="docutils literal"><span class="pr
 the file names where to store the MCMC outputs into a <code class="docutils literal"><span class="pre">.npz</span></code> file,
 with keywords <code class="docutils literal"><span class="pre">bestp</span></code>, <code class="docutils literal"><span class="pre">CRlo</span></code>, <code class="docutils literal"><span class="pre">CRhi</span></code>, <code class="docutils literal"><span class="pre">stdp</span></code>, <code class="docutils literal"><span class="pre">meanp</span></code>,
 <code class="docutils literal"><span class="pre">Z</span></code>, <code class="docutils literal"><span class="pre">Zchain</span></code>, and <code class="docutils literal"><span class="pre">Zchisq</span></code>, <code class="docutils literal"><span class="pre">bestchisq</span></code>, <code class="docutils literal"><span class="pre">redchisq</span></code>,
-<code class="docutils literal"><span class="pre">chifactor</span></code>, and <code class="docutils literal"><span class="pre">BIC</span></code>.  The files can be read with the
+<code class="docutils literal"><span class="pre">chifactor</span></code>, <code class="docutils literal"><span class="pre">BIC</span></code>, and standard deviation of the residuals <code class="docutils literal"><span class="pre">sdr</span></code>.
+The files can be read with the
 <code class="docutils literal"><span class="pre">numpy.load()</span></code> function.  See <a class="reference internal" href="#retvals"><span>Returned Values</span></a> and the description of
 <code class="docutils literal"><span class="pre">chireturn</span></code> below for details on the output values.</p>
 <p>The <code class="docutils literal"><span class="pre">plots</span></code> argument (optional, boolean, default = <code class="docutils literal"><span class="pre">False</span></code>) is a
@@ -515,7 +529,8 @@ sample in <code class="docutils literal"><span class="pre">posterior</span></cod
     <span class="n">nproc</span><span class="o">=</span><span class="n">nproc</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
     <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
-    <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+    <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span>  <span class="n">grbreak</span><span class="o">=</span><span class="n">grbreak</span><span class="p">,</span> <span class="n">grnmin</span><span class="o">=</span><span class="n">grnmin</span><span class="p">,</span>
+    <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
     <span class="n">plots</span><span class="o">=</span><span class="n">plots</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="n">savefile</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="n">rms</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -615,7 +630,8 @@ routine:</p>
     <span class="n">nproc</span><span class="o">=</span><span class="n">nproc</span><span class="p">,</span> <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span> <span class="n">thinning</span><span class="o">=</span><span class="n">thinning</span><span class="p">,</span>
     <span class="n">leastsq</span><span class="o">=</span><span class="n">leastsq</span><span class="p">,</span> <span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">,</span> <span class="n">chisqscale</span><span class="o">=</span><span class="n">chisqscale</span><span class="p">,</span>
     <span class="n">hsize</span><span class="o">=</span><span class="n">hsize</span><span class="p">,</span> <span class="n">kickoff</span><span class="o">=</span><span class="n">kickoff</span><span class="p">,</span>
-    <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
+    <span class="n">grtest</span><span class="o">=</span><span class="n">grtest</span><span class="p">,</span> <span class="n">grbreak</span><span class="o">=</span><span class="n">grbreak</span><span class="p">,</span> <span class="n">grnmin</span><span class="o">=</span><span class="n">grnmin</span><span class="p">,</span>
+    <span class="n">wlike</span><span class="o">=</span><span class="n">wlike</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="n">log</span><span class="p">,</span>
     <span class="n">plots</span><span class="o">=</span><span class="n">plots</span><span class="p">,</span> <span class="n">savefile</span><span class="o">=</span><span class="n">savefile</span><span class="p">,</span> <span class="n">rms</span><span class="o">=</span><span class="n">rms</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -683,7 +699,7 @@ routine:</p>
 <li class="toctree-l3"><a class="reference internal" href="#random-walk">Random Walk</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mcmc-config">MCMC Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optimization">Optimization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#convergence-test">Convergence Test</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convergence">Convergence</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#wavelet-likelihood-mcmc">Wavelet-Likelihood MCMC</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fine-tuning">Fine-tuning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-outputs">File Outputs</a></li>
@@ -739,7 +755,7 @@ routine:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.7 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.10 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
