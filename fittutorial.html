@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Optimization Tutorial &mdash; MC3 2.3.10 documentation</title>
+    <title>Optimization Tutorial &#8212; MC3 2.3.14 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,17 +14,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.3.10',
+        VERSION:     '2.3.14',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <link rel="top" title="MC3 2.3.10 documentation" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Time Averaging" href="timeaveraging.html" />
     <link rel="prev" title="MCMC Tutorial" href="mctutorial.html" /> 
   </head>
@@ -41,7 +43,7 @@
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.10 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.14 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -85,7 +87,7 @@ The only requirement for the modeling function is that its arguments follow
 the same structure of the callable in <code class="docutils literal"><span class="pre">scipy.optimize.leastsq</span></code>, i.e.,
 the first argument contains the list of fitting parameters.</p>
 <p>If func requires additional arguments, they can be provided through
-the <code class="docutils literal"><span class="pre">indparams</span></code> argument (see <a class="reference internal" href="#indp"><span>Independent Parameters</span></a>).
+the <code class="docutils literal"><span class="pre">indparams</span></code> argument (see <a class="reference internal" href="#indp"><span class="std std-ref">Independent Parameters</span></a>).
 Eventually, the modeling function could be called with the following command:</p>
 <p><code class="docutils literal"><span class="pre">model</span> <span class="pre">=</span> <span class="pre">func(params,</span> <span class="pre">*indparams)</span></code></p>
 </div>
@@ -142,7 +144,7 @@ Each of these arguments is a 1D float ndarray.</p>
 <p>If a value of <code class="docutils literal"><span class="pre">priorlow</span></code> is <span class="math">\(0.0\)</span> (default) for a given parameter,
 the MCMC will apply a uniform non-informative prior:</p>
 <div class="math" id="equation-noninfprior">
-<span class="eqno">(1)</span>\[p(\theta) = \frac{1}{\theta_{\rm max} - \theta_{\rm min}},\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-noninfprior" title="Permalink to this equation">¶</a></span>\[p(\theta) = \frac{1}{\theta_{\rm max} - \theta_{\rm min}},\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is appropriate when there is no prior knowledge of the
@@ -151,7 +153,7 @@ value of <span class="math">\(\theta\)</span>.</p>
 <p>If <code class="docutils literal"><span class="pre">priorlow</span></code> is greater than  <span class="math">\(0.0\)</span> for a given parameter,
 the MCMC will apply a Gaussian informative prior:</p>
 <div class="math" id="equation-gaussianprior">
-<span class="eqno">(2)</span>\[p(\theta) = \frac{1}{\sqrt{2\pi\sigma_{p}^{2}}}
+<span class="eqno">(2)<a class="headerlink" href="#equation-gaussianprior" title="Permalink to this equation">¶</a></span>\[p(\theta) = \frac{1}{\sqrt{2\pi\sigma_{p}^{2}}}
        \exp\left(\frac{-(\theta-\theta_{p})^{2}}{2\sigma_{p}^{2}}\right),\]</div>
 <p>where <code class="docutils literal"><span class="pre">prior</span></code> sets the prior value <span class="math">\(\theta_{p}\)</span>, and
 <code class="docutils literal"><span class="pre">priorlow</span></code> and <code class="docutils literal"><span class="pre">priorup</span></code>
@@ -162,20 +164,16 @@ set the lower and upper <span class="math">\(1\sigma\)</span> prior uncertaintie
 <div class="section" id="outputs">
 <h2>Outputs<a class="headerlink" href="#outputs" title="Permalink to this headline">¶</a></h2>
 <p><code class="docutils literal"><span class="pre">modelfit</span></code> returns four variables:</p>
-<ul>
-<li><p class="first"><code class="docutils literal"><span class="pre">chisq</span></code> (float) is the best-fitting chi-square value.</p>
-</li>
-<li><p class="first"><code class="docutils literal"><span class="pre">bestparams</span></code> (1D float ndarray) is the array of best-fitting parameters,
-including fixed and shared parameters.</p>
-</li>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">chisq</span></code> (float) is the best-fitting chi-square value.</li>
+<li><code class="docutils literal"><span class="pre">bestparams</span></code> (1D float ndarray) is the array of best-fitting parameters,
+including fixed and shared parameters.</li>
 <li><dl class="first docutils">
 <dt><code class="docutils literal"><span class="pre">bestmodel</span></code> (1D float ndarray) is the best-fitting model found, i.e.,</dt>
-<dd><p class="first last"><code class="docutils literal"><span class="pre">func(bestparams,</span> <span class="pre">*indparams)</span></code>.</p>
-</dd>
+<dd><code class="docutils literal"><span class="pre">func(bestparams,</span> <span class="pre">*indparams)</span></code>.</dd>
 </dl>
 </li>
-<li><p class="first"><code class="docutils literal"><span class="pre">lsfit</span></code> is the output from the <code class="docutils literal"><span class="pre">scipy</span></code> optimization routine.</p>
-</li>
+<li><code class="docutils literal"><span class="pre">lsfit</span></code> is the output from the <code class="docutils literal"><span class="pre">scipy</span></code> optimization routine.</li>
 </ul>
 </div>
 <div class="section" id="example">
@@ -231,7 +229,7 @@ including fixed and shared parameters.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="mctutorial.html">MCMC Tutorial</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="">Optimization Tutorial</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Optimization Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#optimization-algorithm">Optimization Algorithm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#fitting-parameters">Fitting Parameters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#modeling-function">Modeling Function</a></li>
@@ -258,14 +256,11 @@ including fixed and shared parameters.</p>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -284,12 +279,12 @@ including fixed and shared parameters.</p>
         <li class="right" >
           <a href="mctutorial.html" title="MCMC Tutorial"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.10 documentation</a> &raquo;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">MC3 2.3.14 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &copy; Copyright 2015-2018, Patricio Cubillos.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.3.
+        &#169; Copyright 2015-2018, Patricio Cubillos.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
     </div>
   </body>
 </html>
