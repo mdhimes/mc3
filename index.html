@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Multi-Core Markov-Chain Monte Carlo (MC3) &#8212; MC3 2.3.14 documentation</title>
+    <title>Multi-Core Markov-Chain Monte Carlo (MC3) &#8212; MC3 2.3.21 documentation</title>
     
     <link rel="stylesheet" href="_static/classic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,11 +14,10 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '2.3.14',
+        VERSION:     '2.3.21',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
+        HAS_SOURCE:  true
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -27,6 +26,7 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="top" title="MC3 2.3.21 documentation" href="#" />
     <link rel="next" title="Getting Started" href="getstarted.html" /> 
   </head>
   <body role="document">
@@ -39,7 +39,7 @@
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">MC3 2.3.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">MC3 2.3.21 documentation</a> &#187;</li> 
       </ul>
     </div>  
 
@@ -62,7 +62,7 @@
 </tr>
 <tr class="field-even field"><th class="field-name">Web Site:</th><td class="field-body"><a class="reference external" href="https://github.com/pcubillos/MCcubed">https://github.com/pcubillos/MCcubed</a></td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">Apr 26, 2018</td>
+<tr class="field-odd field"><th class="field-name">Date:</th><td class="field-body">Nov 04, 2018</td>
 </tr>
 </tbody>
 </table>
@@ -91,16 +91,7 @@
 </ul>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal"><span class="pre">MC3</span></code> should work for both Python2.7 and Python3!</p>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Attention!, there was a bug fix to the snooker random walk,
-where the posteriors were underestimating the parameter
-uncertainties as the number of free parameters
-increase.  For those who have used version 2.2 with the
-snooker random walk, please update to the current
-version (v2.3).</p>
+<p class="last"><code class="docutils literal"><span class="pre">MC3</span></code> works in both Python2.7 and Python3!</p>
 </div>
 </div>
 <div class="section" id="collaborators">
@@ -199,7 +190,7 @@ development of this package.</p>
 <h1>Be Kind<a class="headerlink" href="#be-kind" title="Permalink to this headline">¶</a></h1>
 <dl class="docutils">
 <dt>Please cite this paper if you found <code class="docutils literal"><span class="pre">MC3</span></code> useful for your research:</dt>
-<dd><a class="reference external" href="http://adsabs.harvard.edu/abs/2017AJ....153....3C">Cubillos et al. 2017: On the Correlated-noise Analyses Applied to
+<dd><a class="reference external" href="http://adsabs.harvard.edu/abs/2017AJ....153....3C">Cubillos et al. (2017): On the Correlated-noise Analyses Applied to
 Exoplanet Light Curves</a>, AJ, 153, 3.</dd>
 </dl>
 <p>We welcome your feedback, but do not necessarily guarantee support.
@@ -212,11 +203,12 @@ Please send feedback or inquiries to:</p>
 </div>
 <div class="section" id="documentation-for-previous-releases">
 <h1>Documentation for Previous Releases<a class="headerlink" href="#documentation-for-previous-releases" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><a class="reference external" href="http://geco.oeaw.ac.at/patricio/MC3_v2.2.pdf">MC3 version 2.2</a> (and earlier).</li>
-<li><a class="reference external" href="http://geco.oeaw.ac.at/patricio/MC3_v1.2.pdf">MC3 version 1.2</a> (and earlier).</li>
-<li><a class="reference external" href="http://geco.oeaw.ac.at/patricio/MC3_v1.1.pdf">MC3 version 1.1</a> (and earlier).</li>
-</ul>
+<p>If you have an older version, you can compile these docs, according to your version into a pdf with the following commands:</p>
+<div class="highlight-shell"><div class="highlight"><pre><span></span><span class="c1"># cd into MCcubed/docs</span>
+make latexpdf
+</pre></div>
+</div>
+<p>The output pdf docs will be located at <code class="docutils literal"><span class="pre">.../MCcubed/docs/latex/MC3.pdf</span></code>.</p>
 </div>
 
 
@@ -261,12 +253,12 @@ Please send feedback or inquiries to:</p>
         <li class="right" >
           <a href="getstarted.html" title="Getting Started"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">MC3 2.3.14 documentation</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">MC3 2.3.21 documentation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015-2018, Patricio Cubillos.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
     </div>
   </body>
 </html>
