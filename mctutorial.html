@@ -17,7 +17,8 @@
         VERSION:     '2.3.21',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
@@ -26,7 +27,6 @@
     <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="MC3 2.3.21 documentation" href="index.html" />
     <link rel="next" title="Optimization Tutorial" href="fittutorial.html" />
     <link rel="prev" title="Getting Started" href="getstarted.html" /> 
   </head>
@@ -189,8 +189,8 @@ The default values for each element of <code class="docutils literal"><span clas
 <code class="docutils literal"><span class="pre">-np.inf</span></code> and <code class="docutils literal"><span class="pre">+np.inf</span></code>, respectively.
 The <code class="docutils literal"><span class="pre">pmin</span></code> and <code class="docutils literal"><span class="pre">pmax</span></code> arrays must have the same size of <code class="docutils literal"><span class="pre">params</span></code>.</p>
 </div>
-<div class="section" id="stepsize-fixed-and-shared-paramerers">
-<h3>Stepsize, Fixed, and Shared Paramerers<a class="headerlink" href="#stepsize-fixed-and-shared-paramerers" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="stepsize-fixed-and-shared-parameters">
+<h3>Stepsize, Fixed, and Shared Parameters<a class="headerlink" href="#stepsize-fixed-and-shared-parameters" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">stepsize</span></code> argument (required) is a 1D float ndarray,
 where each element correspond to one of the fitting parameters.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">stepsize</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>  <span class="mf">1.0</span><span class="p">,</span>   <span class="mf">0.5</span><span class="p">,</span>   <span class="mf">0.1</span><span class="p">])</span>
@@ -215,7 +215,7 @@ the ingress and egress times.</p>
 </div>
 <p>Additionally, when <code class="docutils literal"><span class="pre">walk='mrw'</span></code> (see <a class="reference internal" href="#walk"><span class="std std-ref">Random Walk</span></a> section), <code class="docutils literal"><span class="pre">stepsize</span></code>
 sets the standard deviation, <span class="math">\(\sigma\)</span>, of the Gaussian proposal jump for
-the given parameter (see Eq. <a href="#equation-gaussprop">(5)</a>).</p>
+the given parameter (see Eq. <a class="reference internal" href="#equation-gaussprop">(3)</a>).</p>
 <p>Lastly, <code class="docutils literal"><span class="pre">stepsize</span></code> sets the standard deviation of the initial sampling
 for the chains (see <a class="reference internal" href="#mcchains"><span class="std std-ref">MCMC Config</span></a> section).</p>
 </div>
@@ -235,8 +235,8 @@ Each of these arguments is a 1D float ndarray.</p>
 <p>MC3 supports three types of priors.
 If a value of <code class="docutils literal"><span class="pre">priorlow</span></code> is <span class="math">\(0.0\)</span> (default) for a given parameter,
 the MCMC will apply a uniform non-informative prior:</p>
-<div class="math" id="equation-noninfprior">
-<span class="eqno">(1)</span>\[p(\theta) = \frac{1}{\theta_{\rm max} - \theta_{\rm min}},\]</div>
+<div class="math">
+\[p(\theta) = \frac{1}{\theta_{\rm max} - \theta_{\rm min}},\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is appropriate when there is no prior knowledge of the
@@ -246,7 +246,7 @@ value of <span class="math">\(\theta\)</span>.</p>
 the MCMC will apply a Jeffreys non-informative prior
 (uniform probability per order of magnitude):</p>
 <div class="math" id="equation-jeffreysprior">
-<span class="eqno">(2)</span>\[p(\theta) = \frac{1}{\theta \ln(\theta_{\rm max}/\theta_{\rm min})},\]</div>
+<span class="eqno">(1)<a class="headerlink" href="#equation-jeffreysprior" title="Permalink to this equation">¶</a></span>\[p(\theta) = \frac{1}{\theta \ln(\theta_{\rm max}/\theta_{\rm min})},\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">This is valid only when the parameter takes positive values.
@@ -262,8 +262,8 @@ For more information, see <a class="reference internal" href="#gregory2005" id="
 </div>
 <p>Lastly, if <code class="docutils literal"><span class="pre">priorlow</span></code> is greater than  <span class="math">\(0.0\)</span> for a given parameter,
 the MCMC will apply a Gaussian informative prior:</p>
-<div class="math" id="equation-gaussianprior">
-<span class="eqno">(3)</span>\[p(\theta) = \frac{1}{\sqrt{2\pi\sigma_{p}^{2}}}
+<div class="math">
+\[p(\theta) = \frac{1}{\sqrt{2\pi\sigma_{p}^{2}}}
        \exp\left(\frac{-(\theta-\theta_{p})^{2}}{2\sigma_{p}^{2}}\right),\]</div>
 <p>where <code class="docutils literal"><span class="pre">prior</span></code> sets the prior value <span class="math">\(\theta_{p}\)</span>, and
 <code class="docutils literal"><span class="pre">priorlow</span></code> and <code class="docutils literal"><span class="pre">priorup</span></code>
@@ -278,6 +278,22 @@ sampling, since the proposed and current state priors divide out in
 the Metropolis ratio.</p>
 </div>
 </div>
+<div class="section" id="parameter-names">
+<h3>Parameter Names<a class="headerlink" href="#parameter-names" title="Permalink to this headline">¶</a></h3>
+<p>The <code class="docutils literal"><span class="pre">pnames</span></code> argument (optional) define the names of the model
+parametes to be shown in the scren output and figure labels.  In
+figures, the names can use LaTeX syntax.  The screen output will
+display up to 11 characters.  Thus, the user can define the
+<code class="docutils literal"><span class="pre">figpnames</span></code> argument (optional), display the appropriate syntax for
+screen output and figures, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">pnames</span>    <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;log(alpha)&quot;</span><span class="p">,</span> <span class="s2">&quot;beta&quot;</span><span class="p">,</span> <span class="s2">&quot;Teff&quot;</span><span class="p">]</span>
+<span class="n">figpnames</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$\log(\alpha)$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$\beta$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$T_{\rm eff}$&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal"><span class="pre">figpnames</span></code> is <code class="docutils literal"><span class="pre">None</span></code>, it defaults to <code class="docutils literal"><span class="pre">pnames</span></code>. If <code class="docutils literal"><span class="pre">pnames</span></code>
+is <code class="docutils literal"><span class="pre">None</span></code>, it defaults to <code class="docutils literal"><span class="pre">figpnames</span></code>.  If both arguments are
+<code class="docutils literal"><span class="pre">None</span></code>, they default to a generic <code class="docutils literal"><span class="pre">[Param</span> <span class="pre">1,</span> <span class="pre">Param</span> <span class="pre">2,</span> <span class="pre">...]</span></code> list.</p>
+</div>
 <div class="section" id="random-walk">
 <span id="walk"></span><h3>Random Walk<a class="headerlink" href="#random-walk" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">walk</span></code> argument (optional) defines which random-walk algorithm
@@ -290,7 +306,7 @@ for the MCMC:</p>
 <a class="reference internal" href="#terbraak2006" id="id2">[terBraak2006]</a>) proposes for each chain <span class="math">\(i\)</span> in state
 <span class="math">\(\mathbf{x}_{i}\)</span>:</p>
 <div class="math" id="equation-eqdemc">
-<span class="eqno">(4)</span>\[\mathbf{x}^* = \mathbf{x}_i + \gamma (\mathbf{x}_{R1}-\mathbf{x}_{R2}) + \mathbf{e},\]</div>
+<span class="eqno">(2)<a class="headerlink" href="#equation-eqdemc" title="Permalink to this equation">¶</a></span>\[\mathbf{x}^* = \mathbf{x}_i + \gamma (\mathbf{x}_{R1}-\mathbf{x}_{R2}) + \mathbf{e},\]</div>
 <p>where <span class="math">\(\mathbf{x}_{R1}\)</span> and <span class="math">\(\mathbf{x}_{R2}\)</span> are randomly
 selected without replacement from the population of current states
 without <span class="math">\(\mathbf{x}_{i}\)</span>.  This implementation adopts
@@ -309,7 +325,7 @@ Gaussian distributions centered at the current value, <span class="math">\(\thet
 a standard deviation, <span class="math">\(\sigma\)</span>, given by the values in the <code class="docutils literal"><span class="pre">stepsize</span></code>
 argument:</p>
 <div class="math" id="equation-gaussprop">
-<span class="eqno">(5)</span>\[q(\theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}
+<span class="eqno">(3)<a class="headerlink" href="#equation-gaussprop" title="Permalink to this equation">¶</a></span>\[q(\theta) = \frac{1}{\sqrt{2 \pi \sigma^2}}
             \exp \left( -\frac{(\theta-\theta_0)^2}{2 \sigma^2}\right)\]</div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -696,8 +712,9 @@ routine:</p>
 <li class="toctree-l3"><a class="reference internal" href="#input-data">Input Data</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#modeling-function">Modeling Function</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#fitting-parameters">Fitting Parameters</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#stepsize-fixed-and-shared-paramerers">Stepsize, Fixed, and Shared Paramerers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#stepsize-fixed-and-shared-parameters">Stepsize, Fixed, and Shared Parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#parameter-priors">Parameter Priors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#parameter-names">Parameter Names</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#random-walk">Random Walk</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#mcmc-config">MCMC Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#optimization">Optimization</a></li>
@@ -759,7 +776,7 @@ routine:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2015-2018, Patricio Cubillos.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.8.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.
     </div>
   </body>
 </html>
