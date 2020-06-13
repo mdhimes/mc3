@@ -6,7 +6,13 @@
 __all__ = ["mcmc"]
 
 import sys, os, subprocess, warnings
-import argparse, ConfigParser
+import argparse
+from six.moves import configparser
+import six
+if six.PY2:
+    ConfigParser = configparser.SafeConfigParser
+else:
+    ConfigParser = configparser.ConfigParser
 import timeit
 import numpy as np
 
@@ -48,7 +54,7 @@ def main():
   if cfile is not None and not os.path.isfile(cfile):
     mu.error("Configuration file: '{:s}' not found.".format(cfile))
   if cfile:
-    config = ConfigParser.SafeConfigParser()
+    config = ConfigParser()
     config.read([cfile])
     defaults = dict(config.items("MCMC"))
   else:
@@ -131,6 +137,12 @@ def main():
                      help="Output filename to store the evaluated models  "
                      "[default: %(default)s]",
                      type=str,     action="store",  default=None)
+  group.add_argument("--modelper", dest="modelper", 
+                     help="Determines how to split MC3's `savemodel`. 0 "    + \
+                          "makes no split, >0 sets the # of iterations per " + \
+                          "split.\nIf nchains=10 and modelper=5, it will "   + \
+                          "save every 50 models to a new .NPY file.",
+                     type=int,       action="store", default=0)
   group.add_argument(       "--mpi",
                      dest="mpi",
                      help="Run under MPI multiprocessing [default: "
@@ -239,6 +251,7 @@ def main():
   plots      = args2.plots
   savefile   = args2.savefile
   savemodel  = args2.savemodel
+  modelper   = args2.modelper
   mpi        = args2.mpi
   resume     = args2.resume
   tracktime  = args2.tractime
@@ -391,7 +404,7 @@ def main():
                      numit, nchains, walk, wlike,
                      leastsq, chisqscale, grtest, grexit, burnin,
                      thinning, fgamma, fepsilon, plots, savefile, savemodel,
-                     comm, resume, log, rms, hsize)
+                     comm, resume, log, rms, hsize, modelper)
 
   if tracktime:
     stop = timeit.default_timer()
@@ -588,14 +601,18 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
     piargs.update({'hsize':     hsize})
 
     # Remove None values:
+    nonelist = []
     for key in piargs.keys():
       if piargs[key] is None:
-        piargs.pop(key)
+        nonelist.append(key)
+
+    for rip in range(len(nonelist)):
+        piargs.pop(nonelist[rip])
 
     # Temporary files:
     tmpfiles = []
     # Open ConfigParser:
-    config = ConfigParser.SafeConfigParser()
+    config = ConfigParser()
     if not cfile:
       config.add_section('MCMC')  # Start new config file
     else:
@@ -635,7 +652,8 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
         config.set('MCMC', key, str(value))
 
     # Get/set the output file:
-    if piargs.has_key('savefile'):
+    #if piargs.has_key('savefile'):
+    if 'savefile' in piargs:
       savefile = piargs['savefile']
     elif config.has_option('MCMC', 'savefile'):
       savefile = config.get('MCMC', 'savefile')
@@ -654,7 +672,7 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
     # Save the configuration file:
     cfile = 'temp_mc3_mpi_configfile.cfg'
     tmpfiles.append(cfile)
-    with open(cfile, 'wb') as configfile:
+    with open(cfile, 'w') as configfile:
       config.write(configfile)
     piargs.update({'cfile':cfile})
 

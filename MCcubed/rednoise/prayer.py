@@ -2,7 +2,13 @@
 # MC3 is open-source software under the MIT license (see LICENSE).
 
 from __future__ import absolute_import
-import sys, os, ConfigParser
+import sys, os
+from six.moves import configparser
+import six
+if six.PY2:
+    ConfigParser = configparser.SafeConfigParser
+else:
+    ConfigParser = configparser.ConfigParser
 import numpy   as np
 
 from .. import utils as mu

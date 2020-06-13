@@ -2,18 +2,19 @@
 # MC3 is open-source software under the MIT license (see LICENSE).
 
 import sys, os
+import six
 import numpy as np
 import matplotlib as mpl
-#mpl.use("Agg")
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../lib")
 import binarray as ba
 
+
 __all__ = ["trace", "pairwise", "histogram", "RMS", "modelfit"]
 
 def trace(allparams, title=None, parname=None, thinning=1,
-          fignum=-10, savefile=None, fmt=".", sep=None):
+          fignum=-10, savefile=None, fmt=".", sep=None, fs=24):
   """
   Plot parameter trace MCMC sampling
 
@@ -44,12 +45,11 @@ def trace(allparams, title=None, parname=None, thinning=1,
   """
   # Get number of parameters and length of chain:
   npars, niter = np.shape(allparams)
-  fs = 14
 
   # Set default parameter names:
   if parname is None:
     namelen = int(2+np.log10(np.amax([npars-1,1])))
-    parname = np.zeros(npars, "|S%d"%namelen)
+    parname = np.zeros(npars, "|S%d"%namelen if six.PY2 else "<U%d"%namelen)
     for i in np.arange(npars):
       parname[i] = "P" + str(i).zfill(namelen-1)
 
@@ -59,39 +59,43 @@ def trace(allparams, title=None, parname=None, thinning=1,
     xsep = np.arange(sep/thinning, xmax, sep/thinning)
 
   # Make the trace plot:
-  plt.figure(fignum, figsize=(8,8))
+  fig = plt.figure(fignum, figsize=(18, npars))
   plt.clf()
   if title is not None:
-    plt.suptitle(title, size=16)
+    plt.suptitle(title, size=fs+4)
 
   plt.subplots_adjust(left=0.15, right=0.95, bottom=0.10, top=0.90,
-                      hspace=0.15)
+                      hspace=0.25)
 
   for i in np.arange(npars):
     a = plt.subplot(npars, 1, i+1)
+    #a.locator_params(tight=True, nbins=2)
     plt.plot(allparams[i, 0::thinning], fmt)
     yran = a.get_ylim()
     if sep is not None:
       plt.vlines(xsep, yran[0], yran[1], "0.3")
     plt.xlim(0, xmax)
-    plt.ylim(yran)
     plt.ylabel(parname[i], size=fs, multialignment='center')
-    plt.yticks(size=fs)
+    plt.yticks(size=fs-6)
     if i == npars - 1:
-      plt.xticks(size=fs)
+      plt.xticks(size=fs-6)
       if thinning > 1:
         plt.xlabel('MCMC (thinned) iteration', size=fs)
       else:
         plt.xlabel('MCMC iteration', size=fs)
     else:
       plt.xticks(visible=False)
+    plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
+
+  # Align labels
+  fig.align_labels()
 
   if savefile is not None:
     plt.savefig(savefile)
 
 
 def pairwise(allparams, title=None, parname=None, thinning=1,
-             fignum=-11, savefile=None, style="hist"):
+             fignum=-11, savefile=None, style="hist", fs=34):
   """
   Plot parameter pairwise posterior distributions
 
@@ -129,54 +133,69 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
   # Set default parameter names:
   if parname is None:
     namelen = int(2+np.log10(np.amax([npars-1,1])))
-    parname = np.zeros(npars, "|S%d"%namelen)
+    parname = np.zeros(npars, "|S%d"%namelen if six.PY2 else "<U%d"%namelen)
     for i in np.arange(npars):
       parname[i] = "P" + str(i).zfill(namelen-1)
-  fs = 14
 
   # Set palette color:
-  palette = plt.matplotlib.colors.LinearSegmentedColormap('YlOrRd2',
-                                               plt.cm.datad['YlOrRd'], 256)
+  palette = mpl.cm.get_cmap('YlOrRd', 256)
   palette.set_under(alpha=0.0)
   palette.set_bad(alpha=0.0)
 
-  fig = plt.figure(fignum, figsize=(8,8))
+  fig = plt.figure(fignum, figsize=(18, 18))
   plt.clf()
   if title is not None:
-    plt.suptitle(title, size=16)
+    plt.suptitle(title, size=fs+4)
 
   h = 1 # Subplot index
   plt.subplots_adjust(left=0.15,   right=0.95, bottom=0.15, top=0.9,
-                      hspace=0.05, wspace=0.05)
+                      hspace=0.20, wspace=0.20)
 
-  for   j in np.arange(1, npars): # Rows
-    for i in np.arange(npars-1):  # Columns
-      if j > i:
-        a = plt.subplot(npars-1, npars-1, h)
+  for   j in np.arange(npars): # Rows
+    for i in np.arange(npars): # Columns
+      if j > i or j == i:
+        a = plt.subplot(npars, npars, h)
         # Y labels:
-        if i == 0:
-          plt.yticks(size=fs)
+        if i == 0 and j != 0:
+          plt.yticks(size=fs-8)
+          plt.ylabel(parname[j], size=fs, multialignment='center')
+        elif i == 0 and j == 0:
+          plt.yticks(visible=False)
           plt.ylabel(parname[j], size=fs, multialignment='center')
         else:
           a = plt.yticks(visible=False)
         # X labels:
         if j == npars-1:
-          plt.xticks(size=fs, rotation=90)
+          plt.xticks(size=fs-8, rotation=90)
           plt.xlabel(parname[i], size=fs)
         else:
           a = plt.xticks(visible=False)
         # The plot:
         if style=="hist":
-          hist2d, xedges, yedges = np.histogram2d(allparams[i, 0::thinning],
-                                   allparams[j, 0::thinning], 20, normed=False)
-          vmin = 0.0
-          hist2d[np.where(hist2d == 0)] = np.nan
-          a = plt.imshow(hist2d.T, extent=(xedges[0], xedges[-1], yedges[0],
-                         yedges[-1]), cmap=palette, vmin=vmin, aspect='auto',
-                         origin='lower', interpolation='bilinear')
+          if j > i:
+            hist2d, xedges, yedges = np.histogram2d(allparams[i, 0::thinning],
+                                                    allparams[j, 0::thinning], 
+                                                    20, density=False)
+            vmin = 0.0
+            hist2d[np.where(hist2d == 0)] = np.nan
+            a = plt.imshow(hist2d.T, extent=(xedges[0], xedges[-1], yedges[0],
+                           yedges[-1]), cmap=palette, vmin=vmin, aspect='auto',
+                           origin='lower', interpolation='bilinear')
+          else:
+            a = plt.hist(allparams[i,0::thinning], 20, density=False)
         elif style=="points":
-          a = plt.plot(allparams[i], allparams[j], ",")
+          if j > i:
+            a = plt.plot(allparams[i], allparams[j], ",")
+          else:
+            a = plt.hist(allparams[i,0::thinning], 20, density=False)
+        plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
+        plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
+
       h += 1
+
+  # Align labels
+  fig.align_labels()
+
   # The colorbar:
   if style == "hist":
     if npars > 2:
@@ -185,11 +204,12 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
       a.xaxis.set_visible(False)
     bounds = np.linspace(0, 1.0, 64)
     norm = mpl.colors.BoundaryNorm(bounds, palette.N)
-    ax2 = fig.add_axes([0.85, 0.535, 0.025, 0.36])
+    ax2 = fig.add_axes([0.8, 0.5, 0.025, 0.36])
     cb = mpl.colorbar.ColorbarBase(ax2, cmap=palette, norm=norm,
           spacing='proportional', boundaries=bounds, format='%.1f')
     cb.set_label("Normalized point density", fontsize=fs)
     cb.set_ticks(np.linspace(0, 1, 5))
+    cb.ax.tick_params(labelsize=fs-8)
     plt.draw()
 
   # Save file:
@@ -198,7 +218,7 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
 
 def histogram(allparams, title=None, parname=None, thinning=1,
-              fignum=-12, savefile=None):
+              fignum=-12, savefile=None, fs=34, bins=60):
   """
   Plot parameter marginal posterior distributions
 
@@ -217,6 +237,8 @@ def histogram(allparams, title=None, parname=None, thinning=1,
      The figure number.
   savefile: Boolean
      If not None, name of file to save the plot.
+  bins: Integer
+     Number of bins for the histogram.
 
   Uncredited developers
   ---------------------
@@ -224,58 +246,60 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   """
   # Get number of parameters and length of chain:
   npars, niter = np.shape(allparams)
-  fs = 14  # Fontsize
 
   # Set default parameter names:
   if parname is None:
     namelen = int(2+np.log10(np.amax([npars-1,1])))
-    parname = np.zeros(npars, "|S%d"%namelen)
+    parname = np.zeros(npars, "|S%d"%namelen if six.PY2 else "<U%d"%namelen)
     for i in np.arange(npars):
       parname[i] = "P" + str(i).zfill(namelen-1)
 
   # Set number of rows:
   if npars < 10:
-    nrows = (npars - 1)/3 + 1
+    nperrow = 3
   else:
-    nrows = (npars - 1)/4 + 1
+    nperrow = 4
+  nrows = (npars - 1)//nperrow + 1
   # Set number of columns:
   if   npars > 9:
     ncolumns = 4
   elif npars > 4:
     ncolumns = 3
   else:
-    ncolumns = (npars+2)/3 + (npars+2)%3  # (Trust me!)
+    ncolumns = (npars+2)//3 + (npars+2)%3  # (Trust me!)
 
-  histheight = np.amin((2 + 2*(nrows), 8))
+  histheight = 4 + 4*(nrows)
   if nrows == 1:
     bottom = 0.25
   else:
     bottom = 0.15
 
-  plt.figure(fignum, figsize=(8, histheight))
+  fig = plt.figure(fignum, figsize=(18, histheight))
   plt.clf()
   plt.subplots_adjust(left=0.1, right=0.95, bottom=bottom, top=0.9,
-                      hspace=0.4, wspace=0.1)
+                      hspace=0.8, wspace=0.1)
 
   if title is not None:
-    a = plt.suptitle(title, size=16)
+    a = plt.suptitle(title, size=fs+4)
 
   maxylim = 0  # Max Y limit
   for i in np.arange(npars):
     ax = plt.subplot(nrows, ncolumns, i+1)
-    a  = plt.xticks(size=fs, rotation=90)
+    a  = plt.xticks(size=fs-6, rotation=90)
     if i%ncolumns == 0:
-      a = plt.yticks(size=fs)
+      a = plt.yticks(size=fs-6)
     else:
       a = plt.yticks(visible=False)
     plt.xlabel(parname[i], size=fs)
-    a = plt.hist(allparams[i,0::thinning], 20, normed=False)
+    a = plt.hist(allparams[i,0::thinning], 60, density=False)
     maxylim = np.amax((maxylim, ax.get_ylim()[1]))
 
   # Set uniform height:
   for i in np.arange(npars):
     ax = plt.subplot(nrows, ncolumns, i+1)
     ax.set_ylim(0, maxylim)
+    ax.yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=6))
+  fig.align_labels() #Align axis labels
 
   if savefile is not None:
     plt.savefig(savefile)
@@ -434,3 +458,4 @@ def modelfit(data, uncert, indparams, model, nbins=75, title=None,
 
   if savefile is not None:
       p = plt.savefig(savefile)
+
