@@ -162,8 +162,11 @@ def ess(allparams):
                 cutoff = len(adjsum)
             # Number of independent samples
             nisamp[nc, p] = 1 + 2 * np.sum(adjsum[:cutoff])
+
+    speis = int(np.ceil(np.amax(nisamp)))
+    ess   = int(np.floor(totiter/speis))
     
-    return int(np.ceil(np.amax(nisamp))), totiter
+    return speis, ess
 
 
 def driver(output, date_dir, burnin, parnames, stepsize):
