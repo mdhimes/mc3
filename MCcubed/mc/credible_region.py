@@ -113,14 +113,13 @@ def sig(ess, p_est=np.array([0.68269, 0.95450, 0.99730])):
 
     Outputs
     -------
-    p_est: same as input. Returned to match with the uncertainties.
     p_unc: array. Uncertainties on the `p_est` regions.
 
     Revisions
     ---------
     2019-09-13  mhimes            Original implementation.
     """
-    return p_est, ((1.-p_est)*p_est/(ess+3))**0.5
+    return ((1.-p_est)*p_est/(ess+3))**0.5
 
 
 def ess(allparams):

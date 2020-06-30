@@ -32,6 +32,7 @@ import dwt      as dwt
 import chisq    as cs
 import timeavg  as ta
 
+
 def mcmc(data,            uncert=None,      func=None,      indparams=[],
          parnames=None,   params=None,      pmin=None,      pmax=None,
          stepsize=None,   prior=None,       priorlow=None,  priorup=None,
@@ -40,7 +41,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
          burnin=0,        thinning=1,       fgamma=1.0,     fepsilon=0.0,
          plots=False,     savefile=None,    savemodel=None, comm=None,
          resume=False,    log=None,         rms=False,      hsize=1, 
-         modelper=0):
+         modelper=0,      p_est=np.array([0.68269, 0.95450, 0.99730])):
   """
   This beautiful piece of code runs a Markov-chain Monte Carlo algoritm.
 
@@ -127,6 +128,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
      Sets how to split `savemodel` into subfiles.
      If 0, does not split. If >0, splits even `modelper` iterations.
      E.g., if nchains=10 and modelper=5, splits every 50 model evaluations.
+  p_est: array 
+     Credible regions to estimate uncertainty.
 
   Returns
   -------
@@ -302,6 +305,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     params[:, s] = params[:, -int(stepsize[s])-1]
 
   # Calculate chi-squared for model using current params:
+  models = np.zeros((nchains, ndata))
   if mpi:
     # Scatter (send) parameters to func:
     mu.comm_scatter(comm, params[:,0:mpars].flatten(), MPI.DOUBLE)
@@ -311,9 +315,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     # Store them in models variable:
     models = np.reshape(mpimodels, (nchains, ndata))
   else:
-    for c in np.arange(nchains):
-      fargs = [params[c, 0:mpars]] + indparams  # List of function's arguments
-      models[c] = func(*fargs)
+    fargs = [params[:, 0:mpars]] + indparams  # List of function's arguments
+    models[:] = func(*fargs)
 
   if walk!='unif':
     # Calculate chi-squared for each chain:
@@ -369,7 +372,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
       for i in range(nfree):
         ind = ifree[i]
         Z[:hsize, :, ind] = np.random.uniform(pmin[ind], pmax[ind],
-                                           (hsize, nchains)        )
+                                              (hsize, nchains)    )
       # Evaluate models for initial samples of Z if using MPI
       if mpi:
         for i in range(hsize):
@@ -383,10 +386,10 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
 
       # Evaluate chi squared, and model if not using MPI
       for i in range(hsize):
+        if not mpi:
+          fargs = [Z[i,:,:mpars]] + indparams
+          Zmodels[i] = func(*fargs)
         for c in range(nchains):
-          if not mpi:
-            fargs = [Z[i,c,:mpars]] + indparams
-            Zmodels[i,c] = func(*fargs)
           # Chi squared
           if wlike:
             Zchisq[i,c], Zc2[i,c] = dwt.wlikelihood(Z[i,c,mpars:],
@@ -395,7 +398,6 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
           else:
             Zchisq[i,c], Zc2[i,c] = cs.chisq(Zmodels[i,c], data, uncert,
                       (Z[i,c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
-
       # Current best Z
       Zibest     = np.unravel_index(np.argmin(Zchisq[:hsize]),
                                               Zchisq[:hsize].shape)
@@ -473,30 +475,30 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     elif walk == "snooker":
       # Random without replacement
       i1     = np.random.randint(0, (Zsize-1)*nchains, nchains)
-      i2     = np.random.randint(1, (Zsize-1)*nchains, nchains)
+      i2     = np.random.randint(0, (Zsize-1)*nchains, nchains)
       for j in range(nchains):
         while i1[j] == i2[j]:
           i2[j] = np.random.randint(0, (Zsize-1)*nchains)
-      iz1, ic1 = np.unravel_index(i1, (Zsize, nchains))
-      iz2, ic2 = np.unravel_index(i2, (Zsize, nchains))
+      iz1, ic1  = np.unravel_index(i1, (Zsize, nchains))
+      iz2, ic2  = np.unravel_index(i2, (Zsize, nchains))
 
       # Select another chain in state z, for each chain
-      iz     = np.random.randint(0, Zsize-1, nchains)
-      ic     = np.random.randint(0, nchains, nchains)
-      z      = Z[iz, ic]
+      iz = np.random.randint(0, Zsize-1, nchains)
+      ic = np.random.randint(0, nchains, nchains)
+      z  = Z[iz, ic]
       # Jumps for chains
       jump   = np.zeros((nchains, nfree))
       noproj = np.all(z == params, axis=1)
-      # Snooker jumps do not project:
+      # Snooker jumps, do not project:
       if np.sum(noproj*sjump[i]) != 0:
         jump[noproj*sjump[i]] = np.random.uniform(1.2, 2.2,
                                         (np.sum(noproj*sjump[i]), nfree)) * \
                             (Z[iz2,ic2]-Z[iz1,ic1])[noproj*sjump[i]][:,ifree]
       # Snooker jumps, project:
       if np.sum(~noproj*sjump[i]) != 0:
-        dz     = (params - z)[:,ifree][~noproj*sjump[i]]
-        zp1    = np.sum(Z[iz1,ic1][:,ifree][~noproj*sjump[i]] * dz, axis=1)
-        zp2    = np.sum(Z[iz2,ic2][:,ifree][~noproj*sjump[i]] * dz, axis=1)
+        dz  = (params - z)[:,ifree][~noproj*sjump[i]]
+        zp1 = np.sum(Z[iz1,ic1][:,ifree][~noproj*sjump[i]] * dz, axis=1)
+        zp2 = np.sum(Z[iz2,ic2][:,ifree][~noproj*sjump[i]] * dz, axis=1)
         jump[~noproj*sjump[i]] = np.random.uniform(1.2, 2.2,
                                          (np.sum(~noproj*sjump[i]), nfree)) * \
                               (zp1 - zp2).reshape(zp1.shape[0],1)           / \
@@ -513,8 +515,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
       nextp[:,ifree] = params[:,ifree] + jump
 
     # Check it's within boundaries:
-    outpars = np.asarray(((nextp < pmin) | (nextp > pmax))[:,ifree])
-    outflag  = np.any(outpars, axis=1)
+    outpars    = np.asarray(((nextp < pmin) | (nextp > pmax))[:,ifree])
+    outflag    = np.any(outpars, axis=1)
     outbounds += ((nextp < pmin) | (nextp > pmax))[:,ifree]
     for p in ifree:
       nextp[np.where(nextp[:, p] < pmin[p]), p] = pmin[p]
@@ -530,9 +532,12 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
       mu.comm_gather(comm, mpimodels)
       models = np.reshape(mpimodels, (nchains, ndata))
     else:
-      for c in np.where(~outflag)[0]:
+      c = np.where(~outflag)[0]
+      if len(c) > 0:
         fargs = [nextp[c, 0:mpars]] + indparams  # List of function's arguments
         models[c] = func(*fargs)
+      else:
+        continue
 
     if walk!='unif':
       # Calculate chisq:
@@ -543,26 +548,24 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
         else:
           nextchisq[c], c2[c] = cs.chisq(models[c], data, uncert,
                    (nextp[c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
-
-      # Reject out-of-bound jumps:
-      nextchisq[np.where(outflag)] = np.inf
-      # Evaluate which steps are accepted and update values:
+      nextchisq[outflag] = np.inf # Reject out of bounds jumps
+      # Metropolis ratio of accepted projected snooker jumps
       mrfactor[:] = 1.0
-      if walk == "snooker" and np.any(sjump[i]):
-        mrfactor[sjump[i]] = \
-              (np.linalg.norm((nextp -z)[:,ifree][sjump[i]]) /
-               np.linalg.norm((params-z)[:,ifree][sjump[i]]) )**(nfree-1)
+      if walk == "snooker" and np.any(sjump[i] * ~noproj * ~outflag):
+        asj = sjump[i] * ~noproj * ~outflag
+        mrfactor[asj] = (np.linalg.norm((nextp -z)[:,ifree][asj]) /
+                         np.linalg.norm((params-z)[:,ifree][asj]) )**(nfree-1)
 
-    if walk == 'unif':
-      accept = np.ones(nchains)
-    else:
+    # Determine accepted jumps
+    accept = np.ones(nchains)
+    if walk != 'unif':
       accept = np.exp(0.5 * (currchisq - nextchisq)) * mrfactor
     accepted = accept >= unif[i]
     if i >= burnin:
       numaccept += accepted
     # Update params and chi square:
     params   [accepted] = nextp    [accepted]
-    #currchisq[accepted] = nextchisq[accepted]
+    currchisq[accepted] = nextchisq[accepted]
 
     if walk!='unif':
       # Check lowest chi-square:
@@ -572,7 +575,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
         bestchisq = np.amin(c2)
     else:
       bestp     = np.copy(params[0])
-      bestchisq = 1.
+      bestchisq = 0.
 
     # Store current iteration values:
     allparams[:,:,i+nold] = params[:, ifree]
@@ -598,8 +601,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     # Update Z
     if walk == "snooker":
       if i%thinning == 0:
-        Z[hsize + i//thinning][:, ifree] = params[:, ifree]
-        Zchisq[hsize + i//thinning] = currchisq
+        Z[hsize + i//thinning][:, ifree] = np.copy(params[:, ifree])
+        Zchisq[hsize + i//thinning] = np.copy(currchisq)
         if savemodel:
           Zmodels[hsize + i//thinning] = np.copy(models)
         Zsize += 1
@@ -714,23 +717,33 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     mu.msg(1,   "Standard deviation of residuals:  {:.6g}".format(sdr), log, 1)
 
   # Compute credible regions
-  speis, ess   = cr.ess(allparams[:, :, burnin:])
-  p_est, p_unc = cr.sig(ess)
-  mu.msg(1, " ", log)
-  mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
-  mu.msg(1, "ESS  : "+str(ess)+"\n", log, 1)
-  mu.msg(1, " ", log)
+  try:
+    speis, ess   = cr.ess(allparams[:, :, burnin:])
+    p_unc = cr.sig(ess, p_est)
+    mu.msg(1, " ", log)
+    mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
+    mu.msg(1, "ESS  : "+str(ess)+"\n", log, 1)
+    mu.msg(1, " ", log)
+  except:
+    mu.msg(1, " ", log)
+    mu.msg(1, "Unable to determine SPEIS.", log, 1)
+    mu.msg(1, " ", log)
+    p_unc = np.ones(len(p_est)) * np.nan
+
+  outpar = np.asarray(parnames)[stepsize>0]
   for n in range(allstack.shape[0]):
-      pdf, xpdf, CRlo, CRhi = cr.credregion(allstack[n])
-      creg = [' U '.join(['({:10.4e}, {:10.4e})'.format(
+      pdf, xpdf, CRlo, CRhi = cr.credregion(allstack[n], p_est)
+      creg = [' U '.join(['({: 10.4e}, {: 10.4e})'.format(
                                         CRlo[j][k], CRhi[j][k])
                                  for k in range(len(CRlo[j]))])
               for j in range(len(CRlo))]
-      mu.msg(1, parnames[n]+" credible regions:\n", log, 1)
+      mu.msg(1, outpar[n]+" credible regions:\n", log, 1)
       for i in range(len(creg)):
-          mu.msg(1, str(np.round(100*p_est[i], 2))+" +- " + \
-                    str(np.round(100*p_unc[i], 4))+" %: " + \
-                    str(creg[i]), log, 2)
+          mu.msg(1, '{:0<.2f}'.format(100*p_est[i]) + " +- "  + \
+                    '{:0<.4f}'.format(100*p_unc[i]) + " %:  " + \
+                    creg[i].replace(' U ', '\n' + ' '*18 + 'U '), log, 2)
+                    # FINDME Hardcoded 18 is for output alignment. If you 
+                    #        replace this, make sure the output still looks good
       mu.msg(1, " ", log)
 
   if rms:

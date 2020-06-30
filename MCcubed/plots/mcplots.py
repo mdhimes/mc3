@@ -65,7 +65,7 @@ def trace(allparams, title=None, parname=None, thinning=1,
     plt.suptitle(title, size=fs+4)
 
   plt.subplots_adjust(left=0.15, right=0.95, bottom=0.10, top=0.90,
-                      hspace=0.25)
+                      hspace=0.4)
 
   for i in np.arange(npars):
     a = plt.subplot(npars, 1, i+1)
@@ -91,7 +91,7 @@ def trace(allparams, title=None, parname=None, thinning=1,
   fig.align_labels()
 
   if savefile is not None:
-    plt.savefig(savefile)
+    plt.savefig(savefile, bbox_inches="tight")
 
 
 def pairwise(allparams, title=None, parname=None, thinning=1,
@@ -277,7 +277,7 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   fig = plt.figure(fignum, figsize=(18, histheight))
   plt.clf()
   plt.subplots_adjust(left=0.1, right=0.95, bottom=bottom, top=0.9,
-                      hspace=0.8, wspace=0.1)
+                      hspace=1.0, wspace=0.1)
 
   if title is not None:
     a = plt.suptitle(title, size=fs+4)
@@ -302,7 +302,7 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   fig.align_labels() #Align axis labels
 
   if savefile is not None:
-    plt.savefig(savefile)
+    plt.savefig(savefile, bbox_inches='tight')
 
 
 def RMS(binsz, rms, stderr, rmserr, cadence=None, binstep=1,
