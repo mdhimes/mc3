@@ -318,10 +318,10 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     fargs = [params[:, 0:mpars]] + indparams  # List of function's arguments
     models[:] = func(*fargs)
 
+  currchisq = np.zeros(nchains)
   if walk!='unif':
     # Calculate chi-squared for each chain:
-    currchisq = np.zeros(nchains)
-    c2        = np.zeros(nchains)  # No-Jeffrey's chisq
+    c2 = np.zeros(nchains)  # No-Jeffrey's chisq
     for c in np.arange(nchains):
       if wlike: # Wavelet-based likelihood (chi-squared, actually)
         currchisq[c], c2[c] = dwt.wlikelihood(params[c, mpars:], models[c]-data,
