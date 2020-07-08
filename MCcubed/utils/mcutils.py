@@ -369,10 +369,10 @@ def error(message, file=None):
   # Trace back the file, function, and line where the error source:
   t = traceback.extract_stack()
   # Extract fields:
-  modpath    = t[-2][0]                        # Module path
-  modname    = modpath[modpath.rfind('/')+1:]  # Module name
-  funcname   = t[-2][2]                        # Function name
-  linenumber = t[-2][1]                        # Line number
+  modpath    = t[-2][0]                           # Module path
+  modname    = modpath[modpath.rfind(os.sep)+1:]  # Module name
+  funcname   = t[-2][2]                           # Function name
+  linenumber = t[-2][1]                           # Line number
 
   # Text to print:
   text = ("{:s}\n  Error in module: '{:s}', function: '{:s}', line: {:d}\n"
