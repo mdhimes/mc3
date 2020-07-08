@@ -7,7 +7,8 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../lib")
+libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib')
+sys.path.append(libdir)
 import binarray as ba
 
 

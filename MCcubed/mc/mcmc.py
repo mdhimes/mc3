@@ -27,7 +27,8 @@ from .. import utils   as mu
 from .. import plots   as mp
 from .. import VERSION as ver
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/../lib")
+libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "lib")
+sys.path.append(libdir)
 import dwt      as dwt
 import chisq    as cs
 import timeavg  as ta
@@ -717,34 +718,35 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     mu.msg(1,   "Standard deviation of residuals:  {:.6g}".format(sdr), log, 1)
 
   # Compute credible regions
-  try:
-    speis, ess   = cr.ess(allparams[:, :, burnin:])
-    p_unc = cr.sig(ess, p_est)
-    mu.msg(1, " ", log)
-    mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
-    mu.msg(1, "ESS  : "+str(ess)+"\n", log, 1)
-    mu.msg(1, " ", log)
-  except:
-    mu.msg(1, " ", log)
-    mu.msg(1, "Unable to determine SPEIS.", log, 1)
-    mu.msg(1, " ", log)
-    p_unc = np.ones(len(p_est)) * np.nan
-
-  outpar = np.asarray(parnames)[stepsize>0]
-  for n in range(allstack.shape[0]):
-      pdf, xpdf, CRlo, CRhi = cr.credregion(allstack[n], p_est)
-      creg = [' U '.join(['({: 10.4e}, {: 10.4e})'.format(
-                                        CRlo[j][k], CRhi[j][k])
-                                 for k in range(len(CRlo[j]))])
-              for j in range(len(CRlo))]
-      mu.msg(1, outpar[n]+" credible regions:\n", log, 1)
-      for i in range(len(creg)):
-          mu.msg(1, '{:0<.2f}'.format(100*p_est[i]) + " +- "  + \
-                    '{:0<.4f}'.format(100*p_unc[i]) + " %:  " + \
-                    creg[i].replace(' U ', '\n' + ' '*18 + 'U '), log, 2)
-                    # FINDME Hardcoded 18 is for output alignment. If you 
-                    #        replace this, make sure the output still looks good
+  if walk != "unif":
+    try:
+      speis, ess   = cr.ess(allparams[:, :, burnin:])
+      p_unc = cr.sig(ess, p_est)
       mu.msg(1, " ", log)
+      mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
+      mu.msg(1, "ESS  : "+str(ess)+"\n", log, 1)
+      mu.msg(1, " ", log)
+    except:
+      mu.msg(1, " ", log)
+      mu.msg(1, "Unable to determine SPEIS.", log, 1)
+      mu.msg(1, " ", log)
+      p_unc = np.ones(len(p_est)) * np.nan
+
+    outpar = np.asarray(parnames)[stepsize>0]
+    for n in range(allstack.shape[0]):
+        pdf, xpdf, CRlo, CRhi = cr.credregion(allstack[n], p_est)
+        creg = [' U '.join(['({: 10.4e}, {: 10.4e})'.format(
+                                          CRlo[j][k], CRhi[j][k])
+                                   for k in range(len(CRlo[j]))])
+                for j in range(len(CRlo))]
+        mu.msg(1, outpar[n]+" credible regions:\n", log, 1)
+        for i in range(len(creg)):
+            mu.msg(1, '{:0<.2f}'.format(100*p_est[i]) + " +- "  + \
+                      '{:0<.4f}'.format(100*p_unc[i]) + " %:  " + \
+                      creg[i].replace(' U ', '\n' + ' '*18 + 'U '), log, 2)
+                      # FINDME Hardcoded 18 is for output alignment. If you 
+                      #        replace this, make sure the output still looks good
+        mu.msg(1, " ", log)
 
   if rms:
     rms, rmse, stderr, bs = ta.binrms(bestmodel-data)

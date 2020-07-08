@@ -16,7 +16,8 @@ else:
 import timeit
 import numpy as np
 
-sys.path.append(os.path.dirname(os.path.realpath(__file__))+"/..")
+mc3dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "..")
+sys.path.append(mc3dir)
 import MCcubed as mc3
 mc = mc3.mc
 mu = mc3.utils
@@ -372,16 +373,16 @@ def main():
 
     # Get source dir:
     mcfile = mc.__file__
-    iright = mcfile.rfind('/')
+    iright = mcfile.rfind(os.sep)
     if iright == -1:
       sdir = "."
     else:
       sdir = mcfile[:iright]
 
-    funccall = sdir + "/func.py"
+    funccall = os.path.join(sdir, "func.py")
     # Hack func here:
     if func[0] == 'hack':
-      funccall = func[2] + "/" + func[1] + ".py"
+      funccall = os.path.join(func[2], func[1] + ".py")
 
     # Call wrapper of model function:
     args = [funccall, "-c" + cfile] + remaining_argv
@@ -625,7 +626,7 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
       if   key == 'func':
         if callable(func):
           funcfile = func.__globals__['__file__']
-          funcpath = funcfile[:funcfile.rfind('/')]
+          funcpath = funcfile[:funcfile.rfind(os.sep)]
           config.set('MCMC', key, "%s %s %s"%(func.__name__,
                                               func.__module__, funcpath))
         else:
