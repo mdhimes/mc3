@@ -6,8 +6,6 @@ topdir = os.path.dirname(os.path.realpath(__file__))
 sys.path.append(os.path.join(topdir, 'MCcubed'))
 import VERSION as ver
 
-srcdir = topdir + '/src_c/'          # C-code source folder
-incdir = topdir + '/src_c/include/'  # Include folder with header files
 # C-code source folder
 srcdir = os.path.join(topdir, 'src_c', '')
 # Include folder with header files
