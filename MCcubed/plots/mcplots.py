@@ -15,7 +15,8 @@ import binarray as ba
 __all__ = ["trace", "pairwise", "histogram", "RMS", "modelfit"]
 
 def trace(allparams, title=None, parname=None, thinning=1,
-          fignum=-10, savefile=None, fmt=".", sep=None, fs=24):
+          fignum=-10, savefile=None, fmt=".", sep=None, fs=24, 
+          truepars=None):
   """
   Plot parameter trace MCMC sampling
 
@@ -46,6 +47,12 @@ def trace(allparams, title=None, parname=None, thinning=1,
   """
   # Get number of parameters and length of chain:
   npars, niter = np.shape(allparams)
+
+  # Ensure proper number of parameters for `truepars`
+  if truepars is not None:
+    if len(truepars) != npars:
+      raise ValueError("True parameters passed to trace().\n" +              \
+                       "But, it does not match the posterior dimensionality.")
 
   # Set default parameter names:
   if parname is None:
@@ -87,6 +94,8 @@ def trace(allparams, title=None, parname=None, thinning=1,
     else:
       plt.xticks(visible=False)
     plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
+    if truepars is not None:
+      plt.gca().axhline(truepars[i], color='red', lw=4) # plot true param
 
   # Align labels
   fig.align_labels()
@@ -96,7 +105,8 @@ def trace(allparams, title=None, parname=None, thinning=1,
 
 
 def pairwise(allparams, title=None, parname=None, thinning=1,
-             fignum=-11, savefile=None, style="hist", fs=34):
+             fignum=-11, savefile=None, style="hist", fs=34, 
+             truepars=None):
   """
   Plot parameter pairwise posterior distributions
 
@@ -126,6 +136,12 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
   """
   # Get number of parameters and length of chain:
   npars, niter = np.shape(allparams)
+
+  # Ensure proper number of parameters for `truepars`
+  if truepars is not None:
+    if len(truepars) != npars:
+      raise ValueError("True parameters passed to pairwise().\n" +           \
+                       "But, it does not match the posterior dimensionality.")
 
   # Don't plot if there are no pairs:
   if npars == 1:
@@ -182,13 +198,21 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
             a = plt.imshow(hist2d.T, extent=(xedges[0], xedges[-1], yedges[0],
                            yedges[-1]), cmap=palette, vmin=vmin, aspect='auto',
                            origin='lower', interpolation='bilinear')
+            if truepars is not None:
+              plt.plot(truepars[i], truepars[j], '*', color='#11151C', ms=20) # plot true params
           else:
             a = plt.hist(allparams[i,0::thinning], 20, density=False)
+            if truepars is not None:
+              plt.gca().axvline(truepars[i], color='#11151C', lw=4) # plot true param
         elif style=="points":
           if j > i:
             a = plt.plot(allparams[i], allparams[j], ",")
+            if truepars is not None:
+              plt.plot(truepars[i], truepars[j], '*', color='#11151C', ms=20) # plot true params
           else:
             a = plt.hist(allparams[i,0::thinning], 20, density=False)
+            if truepars is not None:
+              plt.gca().axvline(truepars[i], color='#11151C', lw=4) # plot true param
         plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
         plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
 
@@ -219,7 +243,8 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
 
 def histogram(allparams, title=None, parname=None, thinning=1,
-              fignum=-12, savefile=None, fs=34, bins=60):
+              fignum=-12, savefile=None, fs=34, bins=40, 
+              truepars=None):
   """
   Plot parameter marginal posterior distributions
 
@@ -247,6 +272,12 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   """
   # Get number of parameters and length of chain:
   npars, niter = np.shape(allparams)
+
+  # Ensure proper number of parameters for `truepars`
+  if truepars is not None:
+    if len(truepars) != npars:
+      raise ValueError("True parameters passed to histogram().\n" +          \
+                       "But, it does not match the posterior dimensionality.")
 
   # Set default parameter names:
   if parname is None:
@@ -300,6 +331,9 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     ax = plt.subplot(nrows, ncolumns, i+1)
     ax.set_ylim(0, maxylim)
     ax.yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=6))
+    # Add true value if given
+    if truepars is not None:
+        ax.axvline(truepars[i], color='red', lw=4)
   fig.align_labels() #Align axis labels
 
   if savefile is not None:
