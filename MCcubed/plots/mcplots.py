@@ -95,7 +95,7 @@ def trace(allparams, title=None, parname=None, thinning=1,
       plt.xticks(visible=False)
     plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
     if truepars is not None:
-      plt.gca().axhline(truepars[i], color='red', lw=4) # plot true param
+      plt.gca().axhline(truepars[i], color='red', lw=3) # plot true param
 
   # Align labels
   fig.align_labels()
@@ -199,20 +199,22 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
                            yedges[-1]), cmap=palette, vmin=vmin, aspect='auto',
                            origin='lower', interpolation='bilinear')
             if truepars is not None:
-              plt.plot(truepars[i], truepars[j], '*', color='#11151C', ms=20) # plot true params
+              plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
+                       markeredgecolor='black', markeredgewidth=1) # plot true params
           else:
             a = plt.hist(allparams[i,0::thinning], 20, density=False)
             if truepars is not None:
-              plt.gca().axvline(truepars[i], color='#11151C', lw=4) # plot true param
+              plt.gca().axvline(truepars[i], color='red', lw=4) # plot true param
         elif style=="points":
           if j > i:
             a = plt.plot(allparams[i], allparams[j], ",")
             if truepars is not None:
-              plt.plot(truepars[i], truepars[j], '*', color='#11151C', ms=20) # plot true params
+              plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
+                       markeredgecolor='black', markeredgewidth=1) # plot true params
           else:
             a = plt.hist(allparams[i,0::thinning], 20, density=False)
             if truepars is not None:
-              plt.gca().axvline(truepars[i], color='#11151C', lw=4) # plot true param
+              plt.gca().axvline(truepars[i], color='red', lw=4) # plot true param
         plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
         plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
 
