@@ -4,15 +4,20 @@
 import sys, os
 import six
 import numpy as np
+import scipy.interpolate as si
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib')
 sys.path.append(libdir)
 import binarray as ba
+mcdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'mc')
+sys.path.append(mcdir)
+import credible_region as cr
 
 
 __all__ = ["trace", "pairwise", "histogram", "RMS", "modelfit"]
+
 
 def trace(allparams, title=None, parname=None, thinning=1,
           fignum=-10, savefile=None, fmt=".", sep=None, fs=24, 
@@ -67,7 +72,7 @@ def trace(allparams, title=None, parname=None, thinning=1,
     xsep = np.arange(sep/thinning, xmax, sep/thinning)
 
   # Make the trace plot:
-  fig = plt.figure(fignum, figsize=(18, npars))
+  fig = plt.figure(fignum, figsize=(18, 1.2*npars))
   plt.clf()
   if title is not None:
     plt.suptitle(title, size=fs+4)
@@ -105,8 +110,8 @@ def trace(allparams, title=None, parname=None, thinning=1,
 
 
 def pairwise(allparams, title=None, parname=None, thinning=1,
-             fignum=-11, savefile=None, style="hist", fs=34, 
-             truepars=None):
+             fignum=-11, savefile=None, style="hist", fs=34, nbins=20, 
+             truepars=None, credreg=False):
   """
   Plot parameter pairwise posterior distributions
 
@@ -128,6 +133,12 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
   style: String
      Choose between 'hist' to plot as histogram, or 'points' to plot
      the individual points.
+  fs: Int
+     Font size
+  nbins: Int
+     Number of bins for 2D histograms. 1D histograms will use 2*bins
+  truepars: array.
+     True parameters, if known.  Plots them in red.
 
   Uncredited developers
   ---------------------
@@ -159,6 +170,11 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
   palette.set_under(alpha=0.0)
   palette.set_bad(alpha=0.0)
 
+  if credreg:
+    hkw = {'histtype':'step', 'lw':0.0}
+  else:
+    hkw = {'edgecolor':'navy', 'color':'b'}
+
   fig = plt.figure(fignum, figsize=(18, 18))
   plt.clf()
   if title is not None:
@@ -189,10 +205,11 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
           a = plt.xticks(visible=False)
         # The plot:
         if style=="hist":
+          # 2D histogram
           if j > i:
             hist2d, xedges, yedges = np.histogram2d(allparams[i, 0::thinning],
                                                     allparams[j, 0::thinning], 
-                                                    20, density=False)
+                                                    nbins, density=False)
             vmin = 0.0
             hist2d[np.where(hist2d == 0)] = np.nan
             a = plt.imshow(hist2d.T, extent=(xedges[0], xedges[-1], yedges[0],
@@ -201,10 +218,40 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
             if truepars is not None:
               plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
                        markeredgecolor='black', markeredgewidth=1) # plot true params
+          # 1D histogram
           else:
-            a = plt.hist(allparams[i,0::thinning], 20, density=False)
+            vals, bins, hh = plt.hist(allparams[i,0::thinning], 2*nbins, 
+                                     density=False, **hkw)
+            if credreg:
+              pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
+                                           percentile=[0.68269, 0.95450, 0.99730])
+              vals = np.r_[0, vals, 0]
+              bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
+              f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
+              # Plot credible regions as shaded areas
+              for k in range(len(CRlo)):
+                for r in range(len(CRlo[k])):
+                  plt.gca().fill_between(xpdf, 0, f(xpdf),
+                                         where=(xpdf>=CRlo[k][r]) * \
+                                               (xpdf<=CRhi[k][r]), 
+                                         facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
+                                         edgecolor='none', interpolate=False, zorder=-2+2*k)
             if truepars is not None:
-              plt.gca().axvline(truepars[i], color='red', lw=4) # plot true param
+              plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
+            if i==0:
+              # Add labels
+              sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
+              sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
+              sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
+              hndls = [sig1, sig2, sig3]
+              if truepars is not None:
+                hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
+                                                  marker='*', ms=20, 
+                                                  markeredgecolor='black', 
+                                                  markeredgewidth=1, 
+                                                  label='True value')]
+              plt.legend(handles=hndls, prop={'size':fs-14}, 
+                         bbox_to_anchor=(1, 1.05))
         elif style=="points":
           if j > i:
             a = plt.plot(allparams[i], allparams[j], ",")
@@ -212,9 +259,38 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
               plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
                        markeredgecolor='black', markeredgewidth=1) # plot true params
           else:
-            a = plt.hist(allparams[i,0::thinning], 20, density=False)
+            vals, bins, hh = plt.hist(allparams[i,0::thinning], 2*nbins, 
+                                     density=False, **hkw)
+            if credreg:
+              pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
+                                           percentile=[0.68269, 0.95450, 0.99730])
+              vals = np.r_[0, vals, 0]
+              bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
+              f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
+              # Plot credible regions as shaded areas
+              for k in range(len(CRlo)):
+                for r in range(len(CRlo[k])):
+                  plt.gca().fill_between(xpdf, 0, f(xpdf),
+                                         where=(xpdf>=CRlo[k][r]) * \
+                                               (xpdf<=CRhi[k][r]), 
+                                         facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
+                                         edgecolor='none', interpolate=False, zorder=-2+2*k)
             if truepars is not None:
-              plt.gca().axvline(truepars[i], color='red', lw=4) # plot true param
+              plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
+            if i==0:
+              # Add labels
+              sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
+              sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
+              sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
+              hndls = [sig1, sig2, sig3]
+              if truepars is not None:
+                hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
+                                                  marker='*', ms=20, 
+                                                  markeredgecolor='black', 
+                                                  markeredgewidth=1, 
+                                                  label='True value')]
+              plt.legend(handles=hndls, prop={'size':fs-14}, 
+                         bbox_to_anchor=(1, 1.05))
         plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
         plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
 
@@ -241,12 +317,13 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
   # Save file:
   if savefile is not None:
-    plt.savefig(savefile)
+    plt.savefig(savefile, bbox_inches='tight')
+    plt.close()
 
 
 def histogram(allparams, title=None, parname=None, thinning=1,
-              fignum=-12, savefile=None, fs=34, bins=40, 
-              truepars=None):
+              fignum=-12, savefile=None, fs=34, nbins=40, 
+              truepars=None, credreg=False):
   """
   Plot parameter marginal posterior distributions
 
@@ -265,8 +342,10 @@ def histogram(allparams, title=None, parname=None, thinning=1,
      The figure number.
   savefile: Boolean
      If not None, name of file to save the plot.
-  bins: Integer
+  nbins: Integer
      Number of bins for the histogram.
+  credreg: Boolean
+     Determines whether or not to plot the credible regions.
 
   Uncredited developers
   ---------------------
@@ -316,6 +395,11 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   if title is not None:
     a = plt.suptitle(title, size=fs+4)
 
+  if credreg:
+    hkw = {'histtype':'step', 'lw':0.0}
+  else:
+    hkw = {'edgecolor':'navy', 'color':'b'}
+
   maxylim = 0  # Max Y limit
   for i in np.arange(npars):
     ax = plt.subplot(nrows, ncolumns, i+1)
@@ -325,7 +409,22 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     else:
       a = plt.yticks(visible=False)
     plt.xlabel(parname[i], size=fs)
-    a = plt.hist(allparams[i,0::thinning], 60, density=False)
+    vals, bins, h = ax.hist(allparams[i,0::thinning], nbins, density=False, 
+                            **hkw)
+    if credreg:
+      pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
+                                   percentile=[0.68269, 0.95450, 0.99730])
+      vals = np.r_[0, vals, 0]
+      bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
+      f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
+      # Plot credible regions as shaded areas
+      for k in range(len(CRlo)):
+        for r in range(len(CRlo[k])):
+          ax.fill_between(xpdf, 0, f(xpdf),
+                                 where=(xpdf>=CRlo[k][r]) * \
+                                       (xpdf<=CRhi[k][r]), 
+                                 facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
+                                 edgecolor='none', interpolate=False, zorder=-2+2*k)
     maxylim = np.amax((maxylim, ax.get_ylim()[1]))
 
   # Set uniform height:
@@ -335,8 +434,18 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     ax.yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=6))
     # Add true value if given
     if truepars is not None:
-        ax.axvline(truepars[i], color='red', lw=4)
+        ax.axvline(truepars[i], color='red', lw=4, zorder=20)
   fig.align_labels() #Align axis labels
+
+  # Add labels
+  sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
+  sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
+  sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
+  hndls = [sig1, sig2, sig3]
+  if truepars is not None:
+    hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, label='True value')]
+  plt.legend(handles=hndls, prop={'size':fs/2.}, 
+             bbox_to_anchor=(1, 0.8))
 
   if savefile is not None:
     plt.savefig(savefile, bbox_inches='tight')
