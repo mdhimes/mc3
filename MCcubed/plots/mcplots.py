@@ -111,7 +111,7 @@ def trace(allparams, title=None, parname=None, thinning=1,
 
 def pairwise(allparams, title=None, parname=None, thinning=1,
              fignum=-11, savefile=None, style="hist", fs=34, nbins=20, 
-             truepars=None, credreg=False):
+             truepars=None, credreg=False, ptitle=False, ndec=None):
   """
   Plot parameter pairwise posterior distributions
 
@@ -139,6 +139,19 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
      Number of bins for 2D histograms. 1D histograms will use 2*bins
   truepars: array.
      True parameters, if known.  Plots them in red.
+  credreg: Boolean
+     Determines whether or not to plot the credible regions.
+  ptitle: Boolean.
+     Controls subplot titles.
+     If False, will not plot title. 
+     If True, will plot the title as the 50% quantile +- the 68.27% region.
+     If the 68.27% region consists of multiple disconnected regions, the 
+     greatest extent will be used for the title.
+     If `truepars` is given, the title also includes the true parameter value.
+  ndec: None, or array of ints.
+     If None, does nothing.
+     If an array of ints, sets the number of decimal places to round each value
+     in the title.
 
   Uncredited developers
   ---------------------
@@ -172,6 +185,7 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
   if credreg:
     hkw = {'histtype':'step', 'lw':0.0}
+    cr_alpha = [1.0, 0.65, 0.4]
   else:
     hkw = {'edgecolor':'navy', 'color':'b'}
 
@@ -215,82 +229,77 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
             a = plt.imshow(hist2d.T, extent=(xedges[0], xedges[-1], yedges[0],
                            yedges[-1]), cmap=palette, vmin=vmin, aspect='auto',
                            origin='lower', interpolation='bilinear')
-            if truepars is not None:
+            if truepars is not None: # plot true params
               plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
-                       markeredgecolor='black', markeredgewidth=1) # plot true params
+                       markeredgecolor='black', markeredgewidth=1)
           # 1D histogram
           else:
             vals, bins, hh = plt.hist(allparams[i,0::thinning], 2*nbins, 
                                      density=False, **hkw)
-            if credreg:
-              pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
-                                           percentile=[0.68269, 0.95450, 0.99730])
-              vals = np.r_[0, vals, 0]
-              bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
-              f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
-              # Plot credible regions as shaded areas
-              for k in range(len(CRlo)):
-                for r in range(len(CRlo[k])):
-                  plt.gca().fill_between(xpdf, 0, f(xpdf),
-                                         where=(xpdf>=CRlo[k][r]) * \
-                                               (xpdf<=CRhi[k][r]), 
-                                         facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
-                                         edgecolor='none', interpolate=False, zorder=-2+2*k)
-            if truepars is not None:
-              plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
-            if i==0:
-              # Add labels
-              sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
-              sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
-              sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
-              hndls = [sig1, sig2, sig3]
-              if truepars is not None:
-                hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
-                                                  marker='*', ms=20, 
-                                                  markeredgecolor='black', 
-                                                  markeredgewidth=1, 
-                                                  label='True value')]
-              plt.legend(handles=hndls, prop={'size':fs-14}, 
-                         bbox_to_anchor=(1, 1.05))
         elif style=="points":
           if j > i:
             a = plt.plot(allparams[i], allparams[j], ",")
-            if truepars is not None:
+            if truepars is not None: # plot true params
               plt.plot(truepars[i], truepars[j], '*', color='red', ms=20, 
-                       markeredgecolor='black', markeredgewidth=1) # plot true params
+                       markeredgecolor='black', markeredgewidth=1)
           else:
             vals, bins, hh = plt.hist(allparams[i,0::thinning], 2*nbins, 
                                      density=False, **hkw)
-            if credreg:
-              pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
-                                           percentile=[0.68269, 0.95450, 0.99730])
-              vals = np.r_[0, vals, 0]
-              bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
-              f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
-              # Plot credible regions as shaded areas
-              for k in range(len(CRlo)):
-                for r in range(len(CRlo[k])):
-                  plt.gca().fill_between(xpdf, 0, f(xpdf),
-                                         where=(xpdf>=CRlo[k][r]) * \
-                                               (xpdf<=CRhi[k][r]), 
-                                         facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
-                                         edgecolor='none', interpolate=False, zorder=-2+2*k)
+        # Plotting credible regions, true params for 1D hist, and titles
+        if j <= i:
+          if credreg:
+            pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
+                                         percentile=[0.68269, 0.95450, 0.99730])
+            vals = np.r_[0, vals, 0]
+            bins = np.r_[bins[0] - (bins[1]-bins[0]), bins]
+            f    = si.interp1d(bins+0.5 * (bins[1]-bins[0]), vals, kind='nearest')
+            # Plot credible regions as shaded areas
+            for k in range(len(CRlo)):
+              for r in range(len(CRlo[k])):
+                plt.gca().fill_between(xpdf, 0, f(xpdf),
+                                       where=(xpdf>=CRlo[k][r]) * \
+                                             (xpdf<=CRhi[k][r]), 
+                                       facecolor=(0.1, 0.4, 0.75, cr_alpha[k]), 
+                                       edgecolor='none', interpolate=False, 
+                                       zorder=-2+2*k)
+            if ptitle:
+              med = np.median(allparams[i,0::thinning])
+              if ndec is not None:
+                lo  = np.around(CRlo[-1][ 0]-med, ndec[i])
+                hi  = np.around(CRhi[-1][-1]-med, ndec[i])
+                med = np.around(med, ndec[i])
+              else:
+                lo  = CRlo[-1][ 0]-med
+                hi  = CRhi[-1][-1]-med
+              titlestr = parname[i] + r' = $'+str(med)+'_{{{0:+g}}}^{{{1:+g}}}$'.format(lo, hi)
+          if truepars is not None:
+            plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
+            if ptitle and credreg:
+              if ndec is not None:
+                titlestr = 'True value: '+str(np.around(truepars[i], ndec[i]))+\
+                           '\n'+titlestr
+              else:
+                titlestr = 'True value: '+str(truepars[i])+'\n'+titlestr
+          if ptitle and credreg:
+            plt.title(titlestr, fontsize=fs-18)
+          if i==0:
+            # Add labels & legend
+            sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[0]), 
+                                     label='$68.27\%$ region')
+            sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[1]), 
+                                     label='$95.45\%$ region')
+            sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[2]), 
+                                     label='$99.73\%$ region')
+            hndls = [sig1, sig2, sig3]
             if truepars is not None:
-              plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
-            if i==0:
-              # Add labels
-              sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
-              sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
-              sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
-              hndls = [sig1, sig2, sig3]
-              if truepars is not None:
-                hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
-                                                  marker='*', ms=20, 
-                                                  markeredgecolor='black', 
-                                                  markeredgewidth=1, 
-                                                  label='True value')]
-              plt.legend(handles=hndls, prop={'size':fs-14}, 
-                         bbox_to_anchor=(1, 1.05))
+              hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
+                                                marker='*', ms=20, 
+                                                markeredgecolor='black', 
+                                                markeredgewidth=1, 
+                                                label='True value')]
+            plt.legend(handles=hndls, prop={'size':fs-14}, 
+                       bbox_to_anchor=(1, 1.05), ncol=2)
+
         plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
         plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
 
@@ -323,7 +332,7 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
 def histogram(allparams, title=None, parname=None, thinning=1,
               fignum=-12, savefile=None, fs=34, nbins=40, 
-              truepars=None, credreg=False):
+              truepars=None, credreg=False, ptitle=False):
   """
   Plot parameter marginal posterior distributions
 
@@ -346,6 +355,9 @@ def histogram(allparams, title=None, parname=None, thinning=1,
      Number of bins for the histogram.
   credreg: Boolean
      Determines whether or not to plot the credible regions.
+  ptitle: Boolean, or string.
+     Controls the subplot titles.
+     If False, will not plot title. Otherwise, puts `title` as the plot title.
 
   Uncredited developers
   ---------------------
@@ -397,6 +409,7 @@ def histogram(allparams, title=None, parname=None, thinning=1,
 
   if credreg:
     hkw = {'histtype':'step', 'lw':0.0}
+    cr_alpha = [1.0, 0.65, 0.4]
   else:
     hkw = {'edgecolor':'navy', 'color':'b'}
 
@@ -423,9 +436,19 @@ def histogram(allparams, title=None, parname=None, thinning=1,
           ax.fill_between(xpdf, 0, f(xpdf),
                                  where=(xpdf>=CRlo[k][r]) * \
                                        (xpdf<=CRhi[k][r]), 
-                                 facecolor=(0.1, 0.4, 0.75, 1.0 - 0.6*k/(len(CRlo)-1)), 
+                                 facecolor=(0.1, 0.4, 0.75, cr_alpha[k]), 
                                  edgecolor='none', interpolate=False, zorder=-2+2*k)
     maxylim = np.amax((maxylim, ax.get_ylim()[1]))
+
+  # Add labels
+  sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='$68.27\%$ region')
+  sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.65), label='$95.45\%$ region')
+  sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='$99.73\%$ region')
+  hndls = [sig1, sig2, sig3]
+  if truepars is not None:
+    hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, label='True value')]
+  plt.legend(handles=hndls, prop={'size':fs/1.5}, loc='upper left', 
+             bbox_to_anchor=(1, 0.8))
 
   # Set uniform height:
   for i in np.arange(npars):
@@ -436,16 +459,6 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     if truepars is not None:
         ax.axvline(truepars[i], color='red', lw=4, zorder=20)
   fig.align_labels() #Align axis labels
-
-  # Add labels
-  sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='1$\sigma$ region')
-  sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.7), label='2$\sigma$ region')
-  sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='3$\sigma$ region')
-  hndls = [sig1, sig2, sig3]
-  if truepars is not None:
-    hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, label='True value')]
-  plt.legend(handles=hndls, prop={'size':fs/2.}, 
-             bbox_to_anchor=(1, 0.8))
 
   if savefile is not None:
     plt.savefig(savefile, bbox_inches='tight')
