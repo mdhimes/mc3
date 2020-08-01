@@ -265,12 +265,12 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
             if ptitle:
               med = np.median(allparams[i,0::thinning])
               if ndec is not None:
-                lo  = np.around(CRlo[-1][ 0]-med, ndec[i])
-                hi  = np.around(CRhi[-1][-1]-med, ndec[i])
+                lo  = np.around(CRlo[0][ 0]-med, ndec[i])
+                hi  = np.around(CRhi[0][-1]-med, ndec[i])
                 med = np.around(med, ndec[i])
               else:
-                lo  = CRlo[-1][ 0]-med
-                hi  = CRhi[-1][-1]-med
+                lo  = CRlo[0][ 0]-med
+                hi  = CRhi[0][-1]-med
               titlestr = parname[i] + r' = $'+str(med)+'_{{{0:+g}}}^{{{1:+g}}}$'.format(lo, hi)
           if truepars is not None:
             plt.gca().axvline(truepars[i], color='red', lw=3) # plot true param
