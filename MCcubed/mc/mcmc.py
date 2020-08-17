@@ -720,7 +720,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   # Compute credible regions
   if walk != "unif":
     try:
-      speis, ess   = cr.ess(allparams[:, :, burnin:])
+      speis, ess   = cr.ess(allparams[:, :, burnin:chainlen])
       p_unc = cr.sig(ess, p_est)
       mu.msg(1, " ", log)
       mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
