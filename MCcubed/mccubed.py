@@ -278,7 +278,11 @@ def main():
 
   # Open a log FILE if requested:
   if logfile is not None:
-    log = open(logfile, "w")
+    if resume:
+      log = open(logfile, "a")
+      log.write("\n\nRESUME\n\n")
+    else:
+      log = open(logfile, "w")
   else:
     log = None
 

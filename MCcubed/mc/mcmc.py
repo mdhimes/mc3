@@ -223,11 +223,6 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   else:
     mpars  = nparams
 
-  if chainsize < burnin:
-    mu.error("The number of burned-in samples ({:d}) is greater than "
-             "the number of iterations per chain ({:d}).".
-             format(burnin, chainsize), log)
-
   # Ensure that hsize is > nchains
   if walk=='snooker' and hsize < nchains:
     hsize = nchains + 1
@@ -251,20 +246,25 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
 
   if resume:
     oldparams = np.load(savefile)
-    nold = np.shape(oldparams)[2] # Number of old-run iterations
+    nold      = np.shape(oldparams)[2] # Number of old-run iterations
     allparams = np.dstack((oldparams, allparams))
-    if savemodel is not None:
-      allmodel  = np.dstack((np.load(savemodel), allmodel))
+    if savemodel is not None and modelper <= 0:
+      allmodel = np.dstack((np.load(savemodel), allmodel))
+    elif savemodel is not None and modelper > 0:
+      # TODO: load all of the files sequentially and insert
+      pass
     # Set params to the last-iteration state of the previous run:
     params = np.repeat(params, nchains, 0)
     params[:,ifree] = oldparams[:,:,-1]
-    # Snooker things - not currently implemented into the savefile
-    '''Zold      = oldparams["Z"]
-    Zlenold   = Zold.shape()[0]
-    Zchainold = oldparams["Zchain"]
-    Zlen      = Zlen + Zlenold'''
+    mu.msg(1, "Resuming previous run: loaded {:d} previous iterations".
+              format(nold), log)
   else:
     nold = 0
+
+  if nold+chainsize < burnin:
+    mu.error("The number of burned-in samples ({:d}) is greater than "
+             "the number of iterations per chain ({:d}).".
+             format(burnin, nold+chainsize), log)
 
   # Set MPI flag:
   mpi = comm is not None
@@ -361,50 +361,89 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
       Zburn   = int(burnin / thinning)
       # Z array
       Z       = np.zeros((hsize+nZchain, nchains, nparams), dtype=np.float64)
-      # Chi-squared for Z
-      Zchisq  = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
-      Zc2     = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
       # Z models
       Zmodels = np.zeros((hsize+nZchain, nchains, ndata), np.double)
-
-      # Populate Z array
-      Z[:, :, 0:mpars] = params[:, 0:mpars]
-      # Populate M0 samples in Z
-      for i in range(nfree):
-        ind = ifree[i]
-        Z[:hsize, :, ind] = np.random.uniform(pmin[ind], pmax[ind],
-                                              (hsize, nchains)    )
-      # Evaluate models for initial samples of Z if using MPI
-      if mpi:
-        for i in range(hsize):
-          # Send params to func
-          mu.comm_scatter(comm, Z[i,:,0:mpars].flatten(), MPI.DOUBLE)
-          # Get evaluated models
+      if resume:
+        # Z array
+        Z       = np.zeros((nold+hsize+nZchain, nchains, nparams), np.float64)
+        Z[:nold, :, ifree] = np.moveaxis(oldparams, -1, 0)
+        Z[:    , :, stepsize==0] = params[0, stepsize==0]
+        Zchisq = np.zeros((Z.shape[0], nchains), dtype=np.float64)
+        Zc2    = np.zeros((Z.shape[0], nchains), dtype=np.float64)
+        # Z models
+        Zmodels = np.zeros((nold+hsize+nZchain, nchains, ndata), np.double)
+        if savemodel is not None and modelper <= 0:
+          Zmodels[:nold] = np.moveaxis(np.load(savemodel), -1, 0)
+        elif savemodel is not None and modelper > 0:
+          # TODO: load all of the files sequentially and insert
+          pass
+        # Load the best parameters and chisq
+        with open(log.name, 'r') as foo:
+          lines = foo.readlines()
+          for ind in range(len(lines)-1, 0, -1):
+            if lines[ind].startswith('Best Parameters'):
+              break
+        Zbestchisq = np.double(lines[ind].split('chisq=')[-1].replace(')', ''))
+        Zbestp = np.zeros(nparams, np.double)
+        nbp = 0
+        while nbp < nfree:
+          for val in lines[ind+1].replace('[', '').replace(']', '').split():
+            Zbestp[nbp] = np.double(val)
+            nbp += 1
+          ind += 1
+        if mpi:
+          mu.comm_scatter(comm, np.repeat(Zbestp, nchains, 0).flatten(), MPI.DOUBLE)
+          # Get evaluated model
           mpiZmodels = np.zeros(nchains*ndata, np.double)
           mu.comm_gather(comm, mpiZmodels)
-          # Store in `Zmodels`
-          Zmodels[i] = np.reshape(mpiZmodels, (nchains, ndata))
+          # Store it
+          Zbestmodel = np.reshape(mpiZmodels, (nchains, ndata))[0]
+        else:
+          fargs = [Zbestp] + indparams
+          Zbestmodel = func(*fargs)
+      else:
+        # Chi-squared for Z
+        Zchisq  = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
+        Zc2     = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
+        # Populate Z array
+        Z[:, :, 0:mpars] = params[:, 0:mpars]
+        # Populate M0 samples in Z
+        for i in range(nfree):
+          ind = ifree[i]
+          Z[:hsize, :, ind] = np.random.uniform(pmin[ind], pmax[ind],
+                                                (hsize, nchains)    )
+        Z[:, :, stepsize==0] = params[0, stepsize==0]
+        # Evaluate models for initial samples of Z if using MPI
+        if mpi:
+          for i in range(hsize):
+            # Send params to func
+            mu.comm_scatter(comm, Z[i,:,0:mpars].flatten(), MPI.DOUBLE)
+            # Get evaluated models
+            mpiZmodels = np.zeros(nchains*ndata, np.double)
+            mu.comm_gather(comm, mpiZmodels)
+            # Store in `Zmodels`
+            Zmodels[i] = np.reshape(mpiZmodels, (nchains, ndata))
 
-      # Evaluate chi squared, and model if not using MPI
-      for i in range(hsize):
-        if not mpi:
-          fargs = [Z[i,:,:mpars]] + indparams
-          Zmodels[i] = func(*fargs)
-        for c in range(nchains):
-          # Chi squared
-          if wlike:
-            Zchisq[i,c], Zc2[i,c] = dwt.wlikelihood(Z[i,c,mpars:],
-                      Zmodels[i,c] - data,
-                      (Z[i,c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
-          else:
-            Zchisq[i,c], Zc2[i,c] = cs.chisq(Zmodels[i,c], data, uncert,
-                      (Z[i,c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
-      # Current best Z
-      Zibest     = np.unravel_index(np.argmin(Zchisq[:hsize]),
-                                              Zchisq[:hsize].shape)
-      Zbestchisq = Zchisq[Zibest]
-      Zbestp     = np.copy(Z[Zibest])
-      Zbestmodel = np.copy(Zmodels[:hsize][Zibest])
+        # Evaluate chi squared, and model if not using MPI
+        for i in range(hsize):
+          if not mpi:
+            fargs = [Z[i,:,:mpars]] + indparams
+            Zmodels[i] = func(*fargs)
+          for c in range(nchains):
+            # Chi squared
+            if wlike:
+              Zchisq[i,c], Zc2[i,c] = dwt.wlikelihood(Z[i,c,mpars:],
+                        Zmodels[i,c] - data,
+                        (Z[i,c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
+            else:
+              Zchisq[i,c], Zc2[i,c] = cs.chisq(Zmodels[i,c], data, uncert,
+                        (Z[i,c]-prior)[iprior], priorlow[iprior], priorlow[iprior])
+        # Current best Z
+        Zibest     = np.unravel_index(np.argmin(Zchisq[:hsize]),
+                                                Zchisq[:hsize].shape)
+        Zbestchisq = Zchisq[Zibest]
+        Zbestp     = np.copy(Z[Zibest])
+        Zbestmodel = np.copy(Zmodels[:hsize][Zibest])
 
     # Get lowest chi-square and best fitting parameters:
     bestchisq = np.amin(c2)
@@ -418,7 +457,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
         bestmodel = Zbestmodel
 
   if savemodel is not None:
-    allmodel[:,:,0] = models
+    allmodel[:,:,nold+0] = models
 
   # Set up the random walks:
   if   walk == "mrw":
@@ -562,7 +601,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     if walk != 'unif':
       accept = np.exp(0.5 * (currchisq - nextchisq)) * mrfactor
     accepted = accept >= unif[i]
-    if i >= burnin:
+    if nold+i >= burnin:
       numaccept += accepted
     # Update params and chi square:
     params   [accepted] = nextp    [accepted]
@@ -654,7 +693,13 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   mu.msg(1, "\nFin, MCMC Summary:\n------------------", log)
 
   if walk!='unif':
-    nsample   = (i+1-burnin)*nchains
+    if resume:
+      if nold > burnin:
+        nsample = (i+1)*nchains
+      else:
+        nsample = (i+1 - (burnin-nold))*nchains
+    else:
+      nsample = (i+1-burnin)*nchains
     ntotal    = np.size(allstack[0])
     BIC       = bestchisq + nfree*np.log(ndata)
     redchisq  = bestchisq/(ndata-nfree)
@@ -664,7 +709,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     mu.msg(1, "Burned in iterations per chain: {:{}d}".
                format(burnin,   fmtlen), log, 1)
     mu.msg(1, "Number of iterations per chain: {:{}d}".
-               format(i+1, fmtlen), log, 1)
+               format(nold+i+1, fmtlen), log, 1)
     mu.msg(1, "MCMC sample size:               {:{}d}".
                format(nsample,  fmtlen), log, 1)
     mu.msg(resume, "Total MCMC sample size:         {:{}d}".
@@ -720,6 +765,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   # Compute credible regions
   if walk != "unif":
     try:
+      print(" \nComputing steps per effective independent sample (SPEIS), \n" \
+          + " effective sample size (ESS), and credible regions...", flush=True)
       speis, ess   = cr.ess(allparams[:, :, burnin:chainlen])
       p_unc = cr.sig(ess, p_est)
       mu.msg(1, " ", log)
