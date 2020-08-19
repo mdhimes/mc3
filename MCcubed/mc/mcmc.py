@@ -360,18 +360,16 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
       # Burned samples
       Zburn   = int(burnin / thinning)
       # Z array
-      Z       = np.zeros((hsize+nZchain, nchains, nparams), dtype=np.float64)
+      Z       = np.zeros((nold+hsize+nZchain, nchains, nparams), dtype=np.float64)
       # Z models
-      Zmodels = np.zeros((hsize+nZchain, nchains, ndata), np.double)
+      Zmodels = np.zeros((nold+hsize+nZchain, nchains, ndata), np.double)
+      # Chi-squared for Z
+      Zchisq  = np.zeros((nold+hsize+nZchain, nchains), dtype=np.float64)
+      Zc2     = np.zeros((nold+hsize+nZchain, nchains), dtype=np.float64)
       if resume:
-        # Z array
-        Z       = np.zeros((nold+hsize+nZchain, nchains, nparams), np.float64)
+        # Put previous iterations in Z array
         Z[:nold, :, ifree] = np.moveaxis(oldparams, -1, 0)
         Z[:    , :, stepsize==0] = params[0, stepsize==0]
-        Zchisq = np.zeros((Z.shape[0], nchains), dtype=np.float64)
-        Zc2    = np.zeros((Z.shape[0], nchains), dtype=np.float64)
-        # Z models
-        Zmodels = np.zeros((nold+hsize+nZchain, nchains, ndata), np.double)
         if savemodel is not None and modelper <= 0:
           Zmodels[:nold] = np.moveaxis(np.load(savemodel), -1, 0)
         elif savemodel is not None and modelper > 0:
@@ -402,9 +400,6 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
           fargs = [Zbestp] + indparams
           Zbestmodel = func(*fargs)
       else:
-        # Chi-squared for Z
-        Zchisq  = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
-        Zc2     = np.zeros((hsize+nZchain, nchains), dtype=np.float64)
         # Populate Z array
         Z[:, :, 0:mpars] = params[:, 0:mpars]
         # Populate M0 samples in Z
