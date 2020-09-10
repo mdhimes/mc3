@@ -283,14 +283,15 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
           if ptitle and credreg:
             plt.title(titlestr, fontsize=fs-18)
           if i==0:
-            # Add labels & legend
-            sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[0]), 
-                                     label='$68.27\%$ region')
-            sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[1]), 
-                                     label='$95.45\%$ region')
-            sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[2]), 
-                                     label='$99.73\%$ region')
-            hndls = [sig1, sig2, sig3]
+            if cregreg:
+              # Add labels & legend
+              sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[0]), 
+                                       label='$68.27\%$ region')
+              sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[1]), 
+                                       label='$95.45\%$ region')
+              sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[2]), 
+                                       label='$99.73\%$ region')
+              hndls = [sig1, sig2, sig3]
             if truepars is not None:
               hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
                                                 marker='*', ms=20, 
