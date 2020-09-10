@@ -292,6 +292,8 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
               sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[2]), 
                                        label='$99.73\%$ region')
               hndls = [sig1, sig2, sig3]
+            else:
+              hndls = []
             if truepars is not None:
               hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, 
                                                 marker='*', ms=20, 
