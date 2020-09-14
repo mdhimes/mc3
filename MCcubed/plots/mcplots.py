@@ -283,7 +283,7 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
           if ptitle and credreg:
             plt.title(titlestr, fontsize=fs-18)
           if i==0:
-            if cregreg:
+            if credreg:
               # Add labels & legend
               sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, cr_alpha[0]), 
                                        label='$68.27\%$ region')
@@ -300,8 +300,9 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
                                                 markeredgecolor='black', 
                                                 markeredgewidth=1, 
                                                 label='True value')]
-            plt.legend(handles=hndls, prop={'size':fs-14}, 
-                       bbox_to_anchor=(1, 1.05), ncol=2)
+            if credreg or truepars is not None:
+              plt.legend(handles=hndls, prop={'size':fs-14}, 
+                         bbox_to_anchor=(1, 1.05), ncol=2)
 
         plt.gca().xaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
         plt.gca().yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=3))
@@ -444,14 +445,18 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     maxylim = np.amax((maxylim, ax.get_ylim()[1]))
 
   # Add labels
-  sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='$68.27\%$ region')
-  sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.65), label='$95.45\%$ region')
-  sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='$99.73\%$ region')
-  hndls = [sig1, sig2, sig3]
+  if credreg:
+    sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='$68.27\%$ region')
+    sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.65), label='$95.45\%$ region')
+    sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='$99.73\%$ region')
+    hndls = [sig1, sig2, sig3]
+  else:
+    hndls = []
   if truepars is not None:
     hndls = hndls + [mpl.lines.Line2D([], [], color='red', lw=4, label='True value')]
-  plt.legend(handles=hndls, prop={'size':fs/1.5}, loc='upper left', 
-             bbox_to_anchor=(1, 0.8))
+  if credreg or truepars is not None:
+    plt.legend(handles=hndls, prop={'size':fs/1.5}, loc='upper left', 
+               bbox_to_anchor=(1, 0.8))
 
   # Set uniform height:
   for i in np.arange(npars):
