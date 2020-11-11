@@ -376,29 +376,39 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
           # TODO: load all of the files sequentially and insert
           pass
         # Load the best parameters and chisq
-        with open(log.name, 'r') as foo:
-          lines = foo.readlines()
-          for ind in range(len(lines)-1, 0, -1):
-            if lines[ind].startswith('Best Parameters'):
-              break
-        Zbestchisq = np.double(lines[ind].split('chisq=')[-1].replace(')', ''))
         Zbestp = np.zeros(nparams, np.double)
-        nbp = 0
-        while nbp < nfree:
-          for val in lines[ind+1].replace('[', '').replace(']', '').split():
-            Zbestp[nbp] = np.double(val)
-            nbp += 1
-          ind += 1
-        if mpi:
-          mu.comm_scatter(comm, np.repeat(Zbestp, nchains, 0).flatten(), MPI.DOUBLE)
-          # Get evaluated model
-          mpiZmodels = np.zeros(nchains*ndata, np.double)
-          mu.comm_gather(comm, mpiZmodels)
-          # Store it
-          Zbestmodel = np.reshape(mpiZmodels, (nchains, ndata))[0]
-        else:
-          fargs = [Zbestp] + indparams
-          Zbestmodel = func(*fargs)
+        try:
+          with open(log.name, 'r') as foo:
+            lines = foo.readlines()
+            for ind in range(len(lines)-1, 0, -1):
+              if lines[ind].startswith('Best Parameters'):
+                break
+          Zbestchisq = np.double(lines[ind].split('chisq=')[-1].replace(')', ''))
+          nbp = 0
+          while nbp < nfree:
+            for val in lines[ind+1].replace('[', '').replace(']', '').split():
+              Zbestp[nbp] = np.double(val)
+              nbp += 1
+            ind += 1
+          if mpi:
+            mu.comm_scatter(comm, np.repeat(Zbestp, nchains, 0).flatten(), MPI.DOUBLE)
+            # Get evaluated model
+            mpiZmodels = np.zeros(nchains*ndata, np.double)
+            mu.comm_gather(comm, mpiZmodels)
+            # Store it
+            Zbestmodel = np.reshape(mpiZmodels, (nchains, ndata))[0]
+          else:
+            fargs = [Zbestp] + indparams
+            Zbestmodel = func(*fargs)
+          mu.msg(1, "Best parameters from previous run: " + str(Zbestp), 
+                 log)
+          mu.msg(1, "Chisq of best parameters from previous run: " + \
+                    str(Zbestchisq), 
+                 log)
+        except:
+          mu.msg(1, "Unable to determine best parameters and chisq from previous run's log.", 
+                 log)
+          Zbestchisq = np.inf
       else:
         # Populate Z array
         Z[:, :, 0:mpars] = params[:, 0:mpars]
