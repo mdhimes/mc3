@@ -1,11 +1,14 @@
 # Copyright (c) 2015-2018 Patricio Cubillos and contributors.
 # MC3 is open-source software under the MIT license (see LICENSE).
 
-import sys, os
+import sys, os, platform
 import six
 import numpy as np
 import scipy.interpolate as si
 import matplotlib as mpl
+if platform.system() == 'Darwin':
+    # Mac fix: use a different backend
+    mpl.use("TkAgg")
 import matplotlib.pyplot as plt
 
 libdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', 'lib')
