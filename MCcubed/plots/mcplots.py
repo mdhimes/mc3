@@ -339,7 +339,7 @@ def pairwise(allparams, title=None, parname=None, thinning=1,
 
 def histogram(allparams, title=None, parname=None, thinning=1,
               fignum=-12, savefile=None, fs=34, nbins=40, 
-              truepars=None, credreg=False, ptitle=False):
+              truepars=None, credreg=False, ptitle=False, density=False):
   """
   Plot parameter marginal posterior distributions
 
@@ -365,6 +365,9 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   ptitle: Boolean, or string.
      Controls the subplot titles.
      If False, will not plot title. Otherwise, puts `title` as the plot title.
+  density: Boolean
+     Determines whether to plot the density (True) or number of occurrences 
+     (False).
 
   Uncredited developers
   ---------------------
@@ -409,7 +412,8 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   fig = plt.figure(fignum, figsize=(18, histheight))
   plt.clf()
   plt.subplots_adjust(left=0.1, right=0.95, bottom=bottom, top=0.9,
-                      hspace=1.0, wspace=0.1)
+                      hspace=1.0, wspace=0.1 + int(density)/10.) 
+  #increase wspace to 0.2 when plotting density
 
   if title is not None:
     a = plt.suptitle(title, size=fs+4)
@@ -424,12 +428,14 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   for i in np.arange(npars):
     ax = plt.subplot(nrows, ncolumns, i+1)
     a  = plt.xticks(size=fs-6, rotation=90)
-    if i%ncolumns == 0:
+    if i%ncolumns == 0 or density:
       a = plt.yticks(size=fs-6)
+      if i%ncolumns == 0 and density:
+        plt.ylabel("Normalized PDF", size=fs)
     else:
       a = plt.yticks(visible=False)
     plt.xlabel(parname[i], size=fs)
-    vals, bins, h = ax.hist(allparams[i,0::thinning], nbins, density=False, 
+    vals, bins, h = ax.hist(allparams[i,0::thinning], nbins, density=density, 
                             **hkw)
     if credreg:
       pdf, xpdf, CRlo, CRhi = cr.credregion(allparams[i,0::thinning], 
@@ -449,9 +455,9 @@ def histogram(allparams, title=None, parname=None, thinning=1,
 
   # Add labels
   if credreg:
-    sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0), label='$68.27\%$ region')
+    sig1 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 1.0 ), label='$68.27\%$ region')
     sig2 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.65), label='$95.45\%$ region')
-    sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4), label='$99.73\%$ region')
+    sig3 = mpl.patches.Patch(color=(0.1, 0.4, 0.75, 0.4 ), label='$99.73\%$ region')
     hndls = [sig1, sig2, sig3]
   else:
     hndls = []
@@ -461,14 +467,15 @@ def histogram(allparams, title=None, parname=None, thinning=1,
     plt.legend(handles=hndls, prop={'size':fs/1.5}, loc='upper left', 
                bbox_to_anchor=(1, 0.8))
 
-  # Set uniform height:
   for i in np.arange(npars):
     ax = plt.subplot(nrows, ncolumns, i+1)
-    ax.set_ylim(0, maxylim)
-    ax.yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=6))
+    if not density:
+    # Set uniform height:
+      ax.set_ylim(0, maxylim)
+      ax.yaxis.set_major_locator(mpl.ticker.MaxNLocator(nbins=6))
     # Add true value if given
     if truepars is not None:
-        ax.axvline(truepars[i], color='red', lw=4, zorder=20)
+      ax.axvline(truepars[i], color='red', lw=4, zorder=20)
   fig.align_labels() #Align axis labels
 
   if savefile is not None:
