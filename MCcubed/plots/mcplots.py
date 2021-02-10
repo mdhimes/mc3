@@ -412,8 +412,7 @@ def histogram(allparams, title=None, parname=None, thinning=1,
   fig = plt.figure(fignum, figsize=(18, histheight))
   plt.clf()
   plt.subplots_adjust(left=0.1, right=0.95, bottom=bottom, top=0.9,
-                      hspace=1.0, wspace=0.1 + int(density)/10.) 
-  #increase wspace to 0.2 when plotting density
+                      hspace=1.0, wspace=0.4)
 
   if title is not None:
     a = plt.suptitle(title, size=fs+4)
