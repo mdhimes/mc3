@@ -219,9 +219,16 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   ishare    = np.where(stepsize < 0)[0]   # Shared parameter indices
   # Number of model parameters (excluding wavelet parameters):
   if wlike:
-    mpars  = nparams - 3
+    mpars = nparams - 3
   else:
-    mpars  = nparams
+    mpars = nparams
+
+  # Ensure parameter names exist
+  if parnames is None:
+    namelen = int(2+np.log10(np.amax([nparams-1,1])))
+    parnames = np.zeros(nparams, "|S%d"%namelen if six.PY2 else "<U%d"%namelen)
+    for i in np.arange(nparams):
+      parnames[i] = "P" + str(i).zfill(namelen-1)
 
   # Ensure that hsize is > nchains
   if walk=='snooker' and hsize < nchains:
