@@ -199,7 +199,7 @@ def loadbin(filename):
   for key, val in sorted(npz.items()):
     data.append(val[()])
     # Check if val is a list or tuple:
-    if key.count("_"):
+    if key.count("_") and "arr_" not in key:
       exec("data[-1] = " + key[key.find('_')+1:] + "(data[-1])")
 
   return data
