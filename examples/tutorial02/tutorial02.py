@@ -15,7 +15,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 # Import the modules from the MCcubed package:
-sys.path.append("../../src")
+sys.path.append("../../")
 import MCcubed as mc3
 
 sys.path.append("../models/")
@@ -24,8 +24,8 @@ from quadratic import quad
 
 # Create a synthetic dataset using a quadratic polynomial curve:
 x  = np.linspace(0, 10, 100)          # Independent model variable
-p0 = 3, -2.4, 0.5                     # True-underlying model parameters
-y  = quad(p0, x)                      # Noiseless model
+p0 = np.array([3, -2.4, 0.5])         # True-underlying model parameters
+y  = np.squeeze(quad(p0, x))          # Noiseless model
 uncert = np.sqrt(np.abs(y))           # Data points uncertainty
 error  = np.random.normal(0, uncert)  # Noise for the data
 data   = y + error                    # Noisy data set

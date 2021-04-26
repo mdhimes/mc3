@@ -11,7 +11,7 @@
 
 
 # Import the necessary modules:
-import sys
+import sys, os
 import numpy as np
 
 # Import the modules from the MCcubed package:
@@ -23,8 +23,8 @@ from quadratic import quad
 
 # Create a synthetic dataset using a quadratic polynomial curve:
 x  = np.linspace(0, 10, 100)          # Independent model variable
-p0 = 3, -2.4, 0.5                     # True-underlying model parameters
-y  = quad(p0, x)                      # Noiseless model
+p0 = np.array([3, -2.4, 0.5])         # True-underlying model parameters
+y  = np.squeeze(quad(p0, x))          # Noiseless model
 uncert = np.sqrt(np.abs(y))           # Data points uncertainty
 error  = np.random.normal(0, uncert)  # Noise for the data
 data   = y + error                    # Noisy data set
@@ -37,12 +37,12 @@ func = quad  # The first argument of func() must be the fitting parameters
 
 # A three-elements tuple indicates the function name, the module
 # name (without the '.py' extension), and the path to the module.
-func = ("quad", "quadratic", "./../models/")
+func = ("quad", "quadratic", os.path.abspath("./../models/"))
 
 # Alternatively, if the module is already within the scope of the
 # Python path, the user can set func with a two-elements tuple:
-sys.path.append("./../models/")
-func = ("quad", "quadratic")
+#sys.path.append("./../models/")
+#func = ("quad", "quadratic")
 
 # indparams contains additional arguments of func (if necessary). Each
 # additional argument is an item in the indparams tuple:

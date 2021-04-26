@@ -26,8 +26,8 @@ from quadratic import quad
 
 # Create a synthetic dataset:
 x = np.linspace(0, 10, 100)          # Independent model variable
-p0 = 3, -2.4, 0.5                    # True-underlying model parameters
-y = quad(p0, x)                      # Noiseless model
+p0 = np.array([3, -2.4, 0.5])        # True-underlying model parameters
+y = quad(p0, x)[0]                   # Noiseless model
 uncert = np.sqrt(np.abs(y))          # Data points uncertainty
 error = np.random.normal(0, uncert)  # Noise for the data
 data = y + error                     # Noisy data set
@@ -37,4 +37,4 @@ params = np.array([ 20.0, -2.0, 0.1])  # Initial guess of fitting params.
 
 # Run the MCMC:
 posterior, bestp = mc3.mcmc(data, uncert, func=quad, indparams=[x],
-                            params=params, numit=3e4, burnin=100)
+                            params=params, numit=1e5, burnin=1e3, grtest=True)

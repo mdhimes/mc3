@@ -122,9 +122,35 @@ def sig(ess, p_est=np.array([0.68269, 0.95450, 0.99730])):
     return ((1.-p_est)*p_est/(ess+3))**0.5
 
 
-def ess(allparams):
+def ess(allparams, method='h21'):
     """
     Computes the effective sample size (ESS) for an MCMC run.
+
+    Inputs
+    ------
+    allparams: 3D array. Posterior distribution of shape 
+                         (num_chains, num_params, num_iter)
+    method   : string.   Determines the ESS estimation method to use.
+                         Options: h21 - (default) Harrington et al. (2021)
+                                  v21 - Vehtari et al. (2021)
+
+    Outputs
+    -------
+    speis: int.   Number of steps per effective independent sample (SPEIS).
+    ess  : float. Effective sample size.
+
+    """
+    if method == 'h21':
+        speis, ess = ess_h21(allparams)
+    elif method == 'v21':
+        speis, ess = ess_v21(allparams)
+    return speis, ess
+
+
+def ess_h21(allparams):
+    """
+    Computes the effective sample size (ESS) for an MCMC run using the method 
+    described in Harrington et al. (2021).
 
     Inputs
     ------
@@ -168,17 +194,86 @@ def ess(allparams):
     return speis, ess
 
 
-def driver(output, date_dir, burnin, parnames, stepsize):
+def ess_v21(allparams):
+    """
+    Computes the effective sample size (ESS) for an MCMC run using 
+    Equations 10, 12 and 13 from Vehtari et al. (2021).
+
+    Inputs
+    ------
+    allparams: 3D array. Posterior distribution of shape 
+                         (num_chains, num_params, num_iter)
+
+    Outputs
+    -------
+    speis: int.   Number of steps per effective independent sample (SPEIS).
+    ess  : float. Effective sample size.
+    """
+    totiter    = allparams.shape[-1] * allparams.shape[0]
+    M, npar, N = allparams.shape
+    
+    # Calculate the autocorrelations for each chain
+    nisamp = np.zeros((allparams.shape[0], allparams.shape[1]))
+    allpac = []
+    for nc in range(M):
+        allpac.append([])
+        for p in range(npar):
+            # Autocorrelation
+            meanapi   = np.mean(     allparams[nc,p])
+            autocorr  = np.correlate(allparams[nc,p]-meanapi,
+                                     allparams[nc,p]-meanapi, mode='full')
+            # It's symmetric, keep only lags >= 0
+            allpac[nc].append(autocorr[np.size(autocorr)//2:] / np.max(autocorr))
+    allpac = np.asarray(allpac)
+    # Allocate arrays needed for Eqn 10 calculation
+    autocorr = np.zeros((npar, allpac[0][0].size))
+    B     = np.zeros(npar)
+    W     = np.zeros(npar)
+    var   = np.zeros(npar)
+    sm2   = np.zeros((npar, M))
+    means = np.zeros((npar, M))
+    mmean = np.zeros(npar)
+    speis = np.zeros(npar)
+    # Compute needed terms from Eqns 2 & 3, calculated Eqn 10
+    for p in range(npar):
+        means[p] = allparams[:,p].mean(axis=-1)
+        mmean[p] = means[p].mean()
+        B[p]     = N / (M - 1) * np.sum((means[p] - mmean[p])**2)
+        sm2[p]   = np.sum((allparams[:,p] - means[p][:, None])**2, axis=-1) / (N - 1)
+        W[p]     = np.sum(sm2[p]) / M
+        var[p]   = (W[p] * (N - 1) + B[p]) / N
+        sm2_ptm  = 0 #sum in eqn 10
+        for m in range(M):
+            sm2_ptm += sm2[p,m] * allpac[m,p]
+        autocorr[p] = 1. - (W[p] - sm2_ptm/M) / var[p] # eqn 10
+        # Sum adjacent pairs - for details, 
+        # see Sec. 3.3 in Geyer 1992, and Vehtari et al (2021) text after eqn 13
+        adjsum = autocorr[p][:-1:2] + autocorr[p][1::2]
+        # Find first negative value (IPS method)
+        if np.any(adjsum<0):
+            cutoff = np.where(adjsum < 0)[0][0]
+        else:
+            cutoff = len(adjsum)
+        # Number of independent samples
+        speis[p] = -1 + 2 * np.sum(adjsum[:cutoff]) #eqn 13
+
+    return speis, totiter/speis
+
+
+def driver(output, date_dir, burnin, parnames, stepsize, method):
     """
     Handles the execution of the above functions for a BART run.
 
     Inputs
     ------
-    output: string. Name of file with posterior in .npy format.
+    output  : string. Name of file with posterior in .npy format.
     date_dir: string. Path/to/output directory.
-    burnin: int. Number of burnin iterations per chain.
+    burnin  : int.    Number of burnin iterations per chain.
     parnames: list, strings. Parameter names.
     stepsize: array, floats. Initial step sizes of MCMC free parameters.
+    method  : string. Determines the ESS estimation method to use.
+                      Options: h21 - Harrington et al. (2021)
+                               v21 - Vehtari et al. (2021)
 
     Outputs
     -------
@@ -192,7 +287,7 @@ def driver(output, date_dir, burnin, parnames, stepsize):
     # Load results
     allparams = np.load(date_dir + output)
     # ESS, credible region uncertainties
-    speis, ess_val = ess(allparams[:, :, burnin:])
+    speis, ess_val = ess(allparams[:, :, burnin:], method)
     p_est, p_unc   = sig(ess_val)
 
     allstack = allparams[0, :, burnin:]

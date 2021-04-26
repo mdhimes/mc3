@@ -167,6 +167,12 @@ def main():
   group.add_argument(      "--hsize",
                      help="Number of initial iterations for snooker",
                      dest="hsize", action="store", default=1, type=int)
+  group.add_argument(      "--Rhat_method",
+                     help="Method to compure Rhat convergence criterion",
+                     dest="Rhat_method", action="store", default='v21', type=str)
+  group.add_argument(      "--ess_method",
+                     help="Method to estimate effective sample size",
+                     dest="ess_method", action="store", default='h21', type=str)
   # Fitting-parameter Options:
   group = parser.add_argument_group("Fitting-function Options")
   group.add_argument("-f", "--func",
@@ -259,6 +265,9 @@ def main():
   logfile    = args2.logfile
   rms        = args2.rms
   hsize      = args2.hsize
+
+  Rhat_method = args2.Rhat_method
+  ess_method  = args2.ess_method
 
   func      = args2.func
   parnames  = args2.parnames
@@ -409,7 +418,8 @@ def main():
                      numit, nchains, walk, wlike,
                      leastsq, chisqscale, grtest, grexit, burnin,
                      thinning, fgamma, fepsilon, plots, savefile, savemodel,
-                     comm, resume, log, rms, hsize, modelper)
+                     comm, resume, log, rms, hsize, modelper, 
+                     Rhat_method=Rhat_method, ess_method=ess_method)
 
   if tracktime:
     stop = timeit.default_timer()
@@ -433,7 +443,7 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
          burnin=None,    thinning=None,   fgamma=None,    fepsilon=None,
          plots=None,     savefile=None,   savemodel=None, mpi=None,
          resume=None,    logfile=None,    rms=None,       hsize=None,
-         cfile=False):
+         Rhat_method='v21', ess_method='h21', cfile=False):
   """
   MCMC wrapper for interactive session.
 
@@ -519,6 +529,15 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
      If True, calculate the RMS of data-bestmodel.
   hsize: Int
      Initial number of samples for snooker walk.
+  Rhat_method: string
+     Method to assess MCMC convergence
+     Options: gr92 - method of Gelman & Rubin (1992)
+              v21  - (default) method of Vehtari et al. (2021)
+  ess_method: string
+     Method to estimate effective sample size
+     Options: h21 - (default) method of Harrington et al. (2021), which uses the smallest 
+                    estimated ESS across all chains & parameters
+              v21 - method of Vehtari et al. (2021)
   cfile: String
      Configuration file name.
 
@@ -572,38 +591,40 @@ def mcmc(data=None,      uncert=None,     func=None,      indparams=None,
   try:
     # Store arguments in a dict:
     piargs = {}
-    piargs.update({'data':      data})
-    piargs.update({'uncert':    uncert})
-    piargs.update({'func':      func})
-    piargs.update({'indparams': indparams})
-    piargs.update({'parnames':  parnames})
-    piargs.update({'params':    params})
-    piargs.update({'pmin':      pmin})
-    piargs.update({'pmax':      pmax})
-    piargs.update({'stepsize':  stepsize})
-    piargs.update({'prior':     prior})
-    piargs.update({'priorlow':  priorlow})
-    piargs.update({'priorup':   priorup})
-    piargs.update({'numit':     numit})
-    piargs.update({'nchains':   nchains})
-    piargs.update({'walk':      walk})
-    piargs.update({'wlike':     wlike})
-    piargs.update({'leastsq':   leastsq})
-    piargs.update({'chisqscale':chisqscale})
-    piargs.update({'grtest':    grtest})
-    piargs.update({'grexit':    grexit})
-    piargs.update({'burnin':    burnin})
-    piargs.update({'thinning':  thinning})
-    piargs.update({'fgamma':    fgamma})
-    piargs.update({'fepsilon':  fepsilon})
-    piargs.update({'plots':     plots})
-    piargs.update({'savefile':  savefile})
-    piargs.update({'savemodel': savemodel})
-    piargs.update({'mpi':       mpi})
-    piargs.update({'resume':    resume})
-    piargs.update({'logfile':   logfile})
-    piargs.update({'rms':       rms})
-    piargs.update({'hsize':     hsize})
+    piargs.update({'data':       data})
+    piargs.update({'uncert':     uncert})
+    piargs.update({'func':       func})
+    piargs.update({'indparams':  indparams})
+    piargs.update({'parnames':   parnames})
+    piargs.update({'params':     params})
+    piargs.update({'pmin':       pmin})
+    piargs.update({'pmax':       pmax})
+    piargs.update({'stepsize':   stepsize})
+    piargs.update({'prior':      prior})
+    piargs.update({'priorlow':   priorlow})
+    piargs.update({'priorup':    priorup})
+    piargs.update({'numit':      numit})
+    piargs.update({'nchains':    nchains})
+    piargs.update({'walk':       walk})
+    piargs.update({'wlike':      wlike})
+    piargs.update({'leastsq':    leastsq})
+    piargs.update({'chisqscale': chisqscale})
+    piargs.update({'grtest':     grtest})
+    piargs.update({'grexit':     grexit})
+    piargs.update({'burnin':     burnin})
+    piargs.update({'thinning':   thinning})
+    piargs.update({'fgamma':     fgamma})
+    piargs.update({'fepsilon':   fepsilon})
+    piargs.update({'plots':      plots})
+    piargs.update({'savefile':   savefile})
+    piargs.update({'savemodel':  savemodel})
+    piargs.update({'mpi':        mpi})
+    piargs.update({'resume':     resume})
+    piargs.update({'logfile':    logfile})
+    piargs.update({'rms':        rms})
+    piargs.update({'hsize':      hsize})
+    piargs.update({'Rhat_method':Rhat_method})
+    piargs.update({'ess_method': ess_method})
 
     # Remove None values:
     nonelist = []

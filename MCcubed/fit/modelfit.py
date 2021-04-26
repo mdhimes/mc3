@@ -103,7 +103,7 @@ def residuals(fitparams, params, func, data, uncert, indparams, stepsize,
   prioroff = params - prior
 
   # Calculate residuals:
-  residuals = cs.residuals(model, data, uncert,
+  residuals = cs.residuals(np.squeeze(model), np.squeeze(data), uncert,
                            prioroff[iprior], priorlow[iprior], priorup[iprior])
   #print("Params: %s"%str(params))
   #print("Prior:  %s"%str(prior))

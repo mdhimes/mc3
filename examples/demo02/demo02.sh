@@ -10,4 +10,4 @@
 # and the following line.
 
 # Run MC3 from shell:
-mpirun ../MCcubed/src/mccubed.py -c MCMC.cfg
+mpirun ../MCcubed/MCcubed/mccubed.py -c MCMC.cfg

@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def quad(p, x):
   """
   Quadratic polynomial function.
@@ -18,6 +21,8 @@ def quad(p, x):
   ---------------------
   2014-04-17  patricio  Initial implementation.  pcubillos@fulbrightmail.org
   """
-  y = p[0] + p[1]*x + p[2]*x**2.0
+  if len(p.shape) == 1:
+    p = np.expand_dims(p, 0)
+  y = np.expand_dims(p[:,0], -1) + np.outer(p[:,1], x) + np.outer(p[:,2], x**2.0)
   return y 
 

@@ -10,6 +10,7 @@ import os
 import sys
 import warnings
 import time
+import importlib
 import argparse
 from six.moves import configparser
 import six
@@ -34,15 +35,16 @@ import chisq    as cs
 import timeavg  as ta
 
 
-def mcmc(data,            uncert=None,      func=None,      indparams=[],
-         parnames=None,   params=None,      pmin=None,      pmax=None,
-         stepsize=None,   prior=None,       priorlow=None,  priorup=None,
-         numit=10,        nchains=10,       walk='demc',    wlike=False,
-         leastsq=True,    chisqscale=False, grtest=True,    grexit=False,
-         burnin=0,        thinning=1,       fgamma=1.0,     fepsilon=0.0,
-         plots=False,     savefile=None,    savemodel=None, comm=None,
-         resume=False,    log=None,         rms=False,      hsize=1, 
-         modelper=0,      p_est=np.array([0.68269, 0.95450, 0.99730])):
+def mcmc(data,              uncert=None,      func=None,      indparams=[],
+         parnames=None,     params=None,      pmin=None,      pmax=None,
+         stepsize=None,     prior=None,       priorlow=None,  priorup=None,
+         numit=10,          nchains=10,       walk='demc',    wlike=False,
+         leastsq=True,      chisqscale=False, grtest=True,    grexit=False,
+         burnin=0,          thinning=1,       fgamma=1.0,     fepsilon=0.0,
+         plots=False,       savefile=None,    savemodel=None, comm=None,
+         resume=False,      log=None,         rms=False,      hsize=1, 
+         modelper=0,        p_est=np.array([0.68269, 0.95450, 0.99730]), 
+         Rhat_method='v21', ess_method='h21'):
   """
   This beautiful piece of code runs a Markov-chain Monte Carlo algoritm.
 
@@ -131,6 +133,15 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
      E.g., if nchains=10 and modelper=5, splits every 50 model evaluations.
   p_est: array 
      Credible regions to estimate uncertainty.
+  Rhat_method: string
+     Method to assess MCMC convergence
+     Options: gr92 - method of Gelman & Rubin (1992)
+              v21  - (default) method of Vehtari et al. (2021)
+  ess_method: string
+     Method to estimate effective sample size
+     Options: h21 - (default) method of Harrington et al. (2021), which uses the smallest 
+                    estimated ESS across all chains & parameters
+              v21 - method of Vehtari et al. (2021)
 
   Returns
   -------
@@ -178,7 +189,9 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     if func[0] != 'hack':
       if len(func) == 3:
         sys.path.append(func[2])
-      exec('from %s import %s as func'%(func[1], func[0]))
+      func = importlib.import_module(func[1]).__getattribute__(func[0])
+    elif len(func) == 1 and callable(func[0]):
+        func = func[0]
   elif not callable(func):
     mu.error("'func' must be either, a callable, or an iterable (list, "
              "tuple, or ndarray) of strings with the model function, file, "
@@ -233,6 +246,13 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
   # Ensure that hsize is > nchains
   if walk=='snooker' and hsize < nchains:
     hsize = nchains + 1
+
+  # burnin might be an int masquarading as a float
+  if type(burnin) != int:
+    if burnin%1:
+      raise ValueError("burnin must be an integer.\nGiven:", burnin)
+    else:
+      burnin = int(burnin)
 
   # Intermediate steps to run GR test and print progress report:
   intsteps   = chainsize / 10
@@ -669,7 +689,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
 
       # Gelman-Rubin statistic:
       if grtest and (i+nold) > burnin:
-        psrf = gr.convergetest(allparams[:, :, burnin:i+nold+1:thinning])
+        psrf = gr.convergetest(allparams[:, :, burnin:i+nold+1:thinning], 
+                               Rhat_method)
         mu.msg(1, "Gelman-Rubin statistic for free parameters:\n{:s}".
                   format(str(psrf)), log)
         if np.all(psrf < 1.01):
@@ -779,8 +800,8 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
     try:
       print(" \nComputing steps per effective independent sample (SPEIS), \n" \
           + " effective sample size (ESS), and credible regions...", flush=True)
-      speis, ess   = cr.ess(allparams[:, :, burnin:chainlen])
-      p_unc = cr.sig(ess, p_est)
+      speis, ess = cr.ess(allparams[:, :, burnin:chainlen], ess_method)
+      p_unc      = cr.sig(ess, p_est)
       mu.msg(1, " ", log)
       mu.msg(1, "SPEIS: "+str(speis)   , log, 1)
       mu.msg(1, "ESS  : "+str(ess)+"\n", log, 1)
@@ -832,7 +853,7 @@ def mcmc(data,            uncert=None,      func=None,      indparams=[],
                  savefile=fname+"_posterior.png")
     # RMS vs bin size:
     if rms:
-      mp.RMS(bs, rms, stderr, rmse, binstep=len(bs)/500+1,
+      mp.RMS(bs, rms, stderr, rmse, binstep=len(bs)//500+1,
                                               savefile=fname+"_RMS.png")
     if indparams != [] and np.size(indparams[0]) == ndata:
       mp.modelfit(data, uncert, indparams[0], bestmodel,
