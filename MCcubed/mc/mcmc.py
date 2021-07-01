@@ -273,8 +273,27 @@ def mcmc(data,              uncert=None,      func=None,      indparams=[],
 
   if resume:
     oldparams = np.load(savefile)
-    nold      = np.shape(oldparams)[2] # Number of old-run iterations
-    allparams = np.dstack((oldparams, allparams))
+    if len(oldparams.shape) == 3:
+        # Normal NPY saveout from this function
+        nold      = np.shape(oldparams)[2] # Number of old-run iterations
+        allparams = np.dstack((oldparams, allparams))
+    elif len(oldparams.shape) == 2:
+        # Stacked result returned by this function
+        if oldparams.shape[0] != nparams:
+            raise ValueError("The supplied NPY history file has a different number of parameters.")
+        mu.warning("Resuming previous run from a NPY history file with 2 dimensions.\n" + \
+                   "This is only valid if the user has not changed the number of chains.\n", log)
+        nold = oldparams.shape[-1] // nchains
+        tmp = np.zeros((nchains, nparams, nold))
+        for i in range(nchains):
+            tmp[i] = oldparams[:, i*nold:(i+1)*nold]
+        oldparams = tmp
+        allparams = np.dstack((oldparams, allparams))
+        del tmp
+    else:
+        raise ValueError("Resuming a run requires a NPY history file with " + \
+                         "2 or 3 dimensions.\nReceived a file with " + \
+                         str(len(oldparams.shape)) + "dimensions.")
     if savemodel is not None and modelper <= 0:
       allmodel = np.dstack((np.load(savemodel), allmodel))
     elif savemodel is not None and modelper > 0:
@@ -387,15 +406,16 @@ def mcmc(data,              uncert=None,      func=None,      indparams=[],
       # Burned samples
       Zburn   = int(burnin / thinning)
       # Z array
-      Z       = np.zeros((nold+hsize+nZchain, nchains, nparams), dtype=np.float64)
+      Z       = np.zeros((nold+hsize+nZchain, nchains, nparams), np.float64)
       # Z models
-      Zmodels = np.zeros((nold+hsize+nZchain, nchains, ndata), np.double)
+      Zmodels = np.zeros((nold+hsize+nZchain, nchains, ndata), np.float64)
       # Chi-squared for Z
-      Zchisq  = np.zeros((nold+hsize+nZchain, nchains), dtype=np.float64)
-      Zc2     = np.zeros((nold+hsize+nZchain, nchains), dtype=np.float64)
+      Zchisq  = np.zeros((nold+hsize+nZchain, nchains), np.float64)
+      Zc2     = np.zeros((nold+hsize+nZchain, nchains), np.float64)
       if resume:
         # Put previous iterations in Z array
         Z[:nold, :, ifree] = np.moveaxis(oldparams, -1, 0)
+        del oldparams
         Z[:    , :, stepsize==0] = params[0, stepsize==0]
         if savemodel is not None and modelper <= 0:
           Zmodels[:nold] = np.moveaxis(np.load(savemodel), -1, 0)
@@ -871,3 +891,5 @@ def mcmc(data,              uncert=None,      func=None,      indparams=[],
       np.save(savemodel, allmodel [:,:,:chainlen])
 
   return allstack, bestp
+
+
